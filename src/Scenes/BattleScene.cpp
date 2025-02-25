@@ -1,0 +1,2276 @@
+#include "BattleScene.h"
+#include "../Items/Characters/Link.h"
+#include "../Items/Maps/Battlefield.h"
+#include "../Items/Armors/FlamebreakerArmor.h"
+#include"../Items/Armors/icebreakerarmor.h"
+#include"../Items/Armors/elecbreakerarmor.h"
+#include"../Items/HeadEquipments/flamebreakerhead.h"
+#include"../Items/HeadEquipments/elecbreakerhead.h"
+#include"../Items/HeadEquipments/icebreakerhead.h"
+#include"../Items/LegEquipments/elecbreakertrou.h"
+#include"../Items/LegEquipments/flamebreakertrou.h"
+#include"../Items/LegEquipments/icebreakertrou.h"
+#include"iceplat.h"
+#include"fireplat.h"
+#include"rockplat.h"
+#include"../Items/Sword/double_ice_metal.h"
+#include"../Items/Sword/short_flame_wooden.h"
+#include"../Items/Sword/long_elec_metal.h"
+#include"../Items/Bow/short_flame_wooden_bow.h"
+#include"../Items/Bow/middle_elec_metal.h"
+#include"../Items/Bow/lone_ice_metal.h"
+#include"../Items/Arrow/elec_arrow.h"
+#include"../Items/Arrow/flame_arrow.h"
+#include"../Items/Arrow/ice_arrow.h"
+#include<ctime>
+#include <QDebug>
+#include <QGraphicsProxyWidget>
+#include <QProgressBar>
+#include <QGraphicsTextItem>
+#include <QKeyEvent>
+#include<QMessageBox>
+#include <QApplication>
+BattleScene::BattleScene(QObject *parent) : Scene(parent)
+{
+
+    setSceneRect(0, 0, 1280, 720);                                      //添加地图、人物、平台
+    srand((unsigned int)time(NULL));                                    //添加随机数种子
+    map = new Battlefield();
+    character = new Link();
+    character_2=new Link();
+    iceplat=new IcePlat();
+    iceplat->setPos(270,300);
+    fireplat=new FirePlat();
+    fireplat->setPos(1000,320);
+    rockplat=new RockPlat();
+    rockplat->setPos(560,150);
+    addItem(map);
+    addItem(character);
+    addItem(iceplat);
+    addItem(fireplat);
+    addItem(rockplat);
+    addItem(character_2);
+    map->scaleToFitScene(this);
+    character->setPos(map->getSpawnPos());
+    character_2->setPos(map->getSpawnPos().x()+100,map->getSpawnPos().y());
+
+    QProgressBar *progressBar = new QProgressBar();                                     //添加血条
+    progressBar->setRange(0, 200);
+    progressBar->setValue(200);                                                         // 设置进度条的值
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget();
+    proxy->setWidget(progressBar);
+    addItem(proxy);
+    proxy->setPos(10, 10);
+
+    QProgressBar *progressBar_2 = new QProgressBar();
+    progressBar_2->setRange(0, 200);
+    progressBar_2->setValue(200);
+    QGraphicsProxyWidget *proxy_2 = new QGraphicsProxyWidget();
+    proxy_2->setWidget(progressBar_2);
+    addItem(proxy_2);
+    proxy_2->setPos(10, 40);
+
+    character->bloodbar=progressBar;                                                    //人物存一个指向血条的指针，用新添加的血条初始化人物血条
+    character_2->bloodbar=progressBar_2;
+
+    lineEdit = new CheatLine();                                                         //作弊框
+    lineEdit->setPlaceholderText("作弊框");                                              // 设置占位符文本
+    lineEdit->setAlignment(Qt::AlignCenter);                                            // 设置对齐方式
+
+    QGraphicsProxyWidget *proxy_3 = new QGraphicsProxyWidget();                         //添加作弊框
+    proxy_3->setWidget(lineEdit);
+    addItem(proxy_3);
+    proxy_3->setPos(1050,10 );
+    connect(lineEdit,&QLineEdit::returnPressed,this,&BattleScene::handleCheatLine);
+    QGraphicsTextItem *textItem = new QGraphicsTextItem("状态栏");
+
+    textItem->setPos(300,10 );                                                          // 设置文本项的位置
+    textItem->setDefaultTextColor(Qt::white);
+    QFont font("Arial", 13);
+    textItem->setFont(font);
+    addItem(textItem);
+
+    QGraphicsTextItem *textItem_2 = new QGraphicsTextItem("状态栏");
+    textItem_2->setPos(300,40 );
+    textItem_2->setDefaultTextColor(Qt::white);
+    textItem_2->setFont(font);
+    addItem(textItem_2);
+
+    character->state=textItem;                                                          //人物存一个指向作弊框的指针
+    character_2->state=textItem_2;
+
+}
+
+void BattleScene::processInput()
+{
+    if(!character->ice_attacked)
+    {
+        HeroInPut(character);
+    }
+    if(!character_2->ice_attacked)
+    {
+        HeroInPut(character_2);
+    }
+
+}
+
+void BattleScene::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_A:
+        if (character != nullptr) {
+            character->setLeftDown(true);
+        }
+        break;
+    case Qt::Key_D:
+        if (character != nullptr) {
+            character->setRightDown(true);
+        }
+        break;
+    case Qt::Key_J:
+        if (character != nullptr) {
+            character->setPickDown(true);
+        }
+        break;
+    case Qt::Key_K:
+        if(character !=nullptr)
+        {
+            character->setJumpDown(true);
+        }break;
+    case Qt::Key_Space:
+        if(character!=nullptr)
+        {
+            character->setAttackDown(true);
+        }break;
+    case Qt::Key_Q:
+        if(character!=nullptr)
+        {
+            character->setchangeweaponDown(true);
+        }break;
+    case Qt::Key_E:
+        if(character!=nullptr)
+        {
+            character->setCastDown(true);
+        }break;
+    case Qt::Key_R:
+        if(character!=nullptr)
+        {
+            character->setchangearrowDown(true);
+        }break;
+
+    case Qt::Key_Left:
+        if (character_2 != nullptr) {
+            character_2->setLeftDown(true);
+        }
+        break;
+    case Qt::Key_Right:
+        if (character_2 != nullptr) {
+            character_2->setRightDown(true);
+        }
+        break;
+    case Qt::Key_Down:
+        if (character_2 != nullptr) {
+            character_2->setPickDown(true);
+        }
+        break;
+    case Qt::Key_Up:
+        if(character_2 !=nullptr)
+        {
+            character_2->setJumpDown(true);
+        }break;
+    case Qt::Key_N:
+        if(character_2!=nullptr)
+        {
+            character_2->setAttackDown(true);
+        }break;
+    case Qt::Key_M:
+        if(character_2!=NULL)
+        {
+            character_2->setchangeweaponDown(true);
+        }
+        break;
+    case Qt::Key_B:
+        if(character_2!=NULL)
+        {
+            character_2->setCastDown(true);
+        }
+        break;
+    case Qt::Key_V:
+        if(character_2!=NULL)
+        {
+            character_2->setchangearrowDown(true);
+        }
+        break;
+    default:
+        Scene::keyPressEvent(event);
+    }
+}
+
+void BattleScene::keyReleaseEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_A:
+        if (character != nullptr) {
+            character->setLeftDown(false);
+        }
+        break;
+    case Qt::Key_D:
+        if (character != nullptr) {
+            character->setRightDown(false);
+        }
+        break;
+    case Qt::Key_J:
+        if (character != nullptr) {
+            character->setPickDown(false);
+        }
+        break;
+    case Qt::Key_K:
+        if(character !=nullptr)
+        {
+            character->setJumpDown(false);
+        }
+        break;
+    case Qt::Key_Space:
+        if(character!=nullptr)
+        {
+            character->setAttackDown(false);
+        }break;
+    case Qt::Key_Q:
+        if(character!=nullptr)
+        {
+            character->setchangeweaponDown(false);
+        }break;
+    case Qt::Key_E:
+        if(character!=NULL)
+        {
+            character->setCastDown(false);
+        }
+        break;
+    case Qt::Key_R:
+        if(character!=NULL)
+        {
+            character->setchangearrowDown(false);
+        }
+        break;
+    case Qt::Key_Left:
+        if (character_2 != nullptr) {
+            character_2->setLeftDown(false);
+        }
+        break;
+    case Qt::Key_Right:
+        if (character_2 != nullptr) {
+            character_2->setRightDown(false);
+        }
+        break;
+    case Qt::Key_Down:
+        if (character_2 != nullptr) {
+            character_2->setPickDown(false);
+        }
+        break;
+    case Qt::Key_Up:
+        if(character_2 !=nullptr)
+        {
+            character_2->setJumpDown(false);
+        }break;
+    case Qt::Key_N:
+        if(character_2!=nullptr)
+        {
+            character_2->setAttackDown(false);
+        }break;
+    case Qt::Key_M:
+        if(character_2!=NULL)
+        {
+            character_2->setchangeweaponDown(false);
+        }
+        break;
+    case Qt::Key_B:
+        if(character_2!=NULL)
+        {
+            character_2->setCastDown(false);
+        }
+        break;
+    case Qt::Key_V:
+        if(character_2!=NULL)
+        {
+            character_2->setchangearrowDown(false);
+        }
+        break;
+    default:
+        Scene::keyReleaseEvent(event);
+    }
+}
+
+void BattleScene::update()
+{
+    Scene::update();
+}
+
+void BattleScene::processMovement()                                     //更新所有物品位置信息
+{
+    Scene::processMovement();
+    if (character != nullptr) {
+        character->setPos(character->pos() + character->getVelocity() * (double) deltaTime);
+    }
+    if (character_2 != nullptr) {
+        character_2->setPos(character_2->pos() + character_2->getVelocity() * (double) deltaTime);
+    }
+    for(Item *item:totalfallthing)                                      //掉落物
+    {
+        item->setPos(item->pos()+item->fall_v*deltaTime);
+    }
+
+    for(Item* item:totalcasting)                                        //投掷物
+    {
+        item->setPos(item->pos()+item->fall_v*deltaTime);
+    }
+    for(Item* item:totalcasting_2)
+    {
+        item->setPos(item->pos()+item->fall_v*deltaTime);
+    }
+    for(Arrow* item:totalshooted)                                       //射出的弓箭
+    {
+        item->setPos(item->pos()+item->fall_v*deltaTime);
+    }
+    for(Arrow* item:totalshooted_2)
+    {
+        item->setPos(item->pos()+item->fall_v*deltaTime);
+    }
+}
+
+void BattleScene::processPicking()
+{
+    Scene::processPicking();
+    if (character->isPicking())
+    {
+        auto mountable = findNearestUnmountedMountable(character->pos(), 100);
+        if (mountable != nullptr)
+        {
+
+            if(auto newarror=dynamic_cast<Arrow*>(mountable))           //捡起箭头与捡起其他装备分开，因为箭头可以储备，其他装备设定为捡起新的换下旧的
+            {
+                character->pickupArrow(newarror);
+            }
+             else
+            {
+                mountable=pickupMountable(character,mountable);
+            }
+        }
+    }
+    if (character_2->isPicking())
+    {
+        auto mountable = findNearestUnmountedMountable(character_2->pos(), 100);
+        if (mountable != nullptr)
+        {
+
+            if(auto newarror=dynamic_cast<Arrow*>(mountable))
+            {
+                character_2->pickupArrow(newarror);
+            }
+            else
+            {
+                mountable=pickupMountable(character_2,mountable);
+            }
+        }
+    }
+}
+
+void BattleScene::HeroInPut(Character *character)                        //人物移动与拾取
+{
+
+
+    Scene::processInput();
+    // QRectF heroRec=character->sceneBoundingRect();
+    QRectF iceRec=iceplat->sceneBoundingRect();
+    QRectF fireRec=fireplat->sceneBoundingRect();
+    QRectF rockRec=rockplat->sceneBoundingRect();
+    int x=character->pos().x();
+    int y=character->pos().y();
+    int h=character->boundingRect().height();
+
+    // iceRec.moveTo(iceplat->pos().x(),iceplat->pos().y());
+
+    if (character != nullptr)
+    {
+        auto v=QPointF(0, 0);
+        v.setY(character->getVelocity().y());
+        if(character->isLeftDown())
+        {
+
+            v.setX(-0.3);
+            character->setTransform(QTransform().scale(1, 1));
+
+        }
+        if(character->isRightDown())
+        {
+            v.setX(0.3);
+            character->setTransform(QTransform().scale(-1, 1));
+        }
+        if(character->isJumpDown())                                                             //跳跃时检测在地面还是在某个平台
+        {
+            if((v.y()==0)&&(character->pos().y()-map->getFloorHeight())<20)
+            {
+                v.setY(-0.8);
+
+            }
+             else if((v.y()==0)&&(y-iceRec.top())<20&&(x>iceRec.left())&&(x<iceRec.right()))
+            {
+                v.setY(-0.8);
+            }
+            else if(fireplat->pos().x()!=-1000)                                                 //木制平台未被燃烧至消失时
+            {
+                if((v.y()==0)&&(y-fireRec.top())<20&&(x>fireRec.left())&&(x<fireRec.right()))
+                {
+                    v.setY(-0.8);
+                }
+            }
+             if((v.y()==0)&&(y-rockRec.top())<20&&(x>rockRec.left())&&(x<rockRec.right()))
+            {
+                v.setY(-0.8);
+            }
+        }
+        if(character->getVelocity().y()!=0)                                                     //人物在空中就会受到重力加速度
+        {
+            v.setY(v.y()+0.02);
+            if(character->pos().y()>map->getFloorHeight())
+            {
+                v.setY(0);
+            }
+        }
+
+        if(x>(iceRec.left()-5)&&x<(iceRec.right()+5))                                           //在金属平台附近
+        {
+            if(y>(iceRec.bottom()-h))
+            {
+                if(character->isLeftDown()&&x>iceRec.right())
+                {
+                    v.setX(0);
+                }
+                if(character->isRightDown()&&x<iceRec.left())
+                {
+                    v.setX(0);
+                }
+
+            }
+            else                                                                                //下落时接触到金属平台会停止
+            {
+                if(v.y()>0&&abs(y-iceRec.top())<5)
+                {
+                    v.setY(0);
+                }
+            }
+        }
+        else
+        {
+            if(abs(y-iceRec.top())<5&&v.y()==0)
+            {
+                v.setY(0.02);
+            }
+        }
+        if(fireplat->pos().x()!=-1000)                                                          //木制平台同理，分两种情况，燃尽前
+        {
+            if(x>(fireRec.left()-5)&&x<(fireRec.right()+5))
+            {
+                if(y>(fireRec.bottom()-h))
+                {
+                    if(character->isLeftDown()&&x>fireRec.right())
+                    {
+                        v.setX(0);
+                    }
+                    if(character->isRightDown()&&x<fireRec.left())
+                    {
+                        v.setX(0);
+                    }
+
+                }
+                else
+                {
+                    if(v.y()>0&&abs(y-fireRec.top())<5)
+                    {
+                        v.setY(0);
+                    }
+                }
+            }
+            else
+            {
+                if((abs(y-fireRec.top())<5&&v.y()==0))
+                {
+                    v.setY(0.02);
+                }
+            }
+        }
+        if(fireplat->pos().x()==-1000)                                                              //燃尽后
+        {
+            if(character->pos().x()>1000)
+
+            {
+                if(v.y()==0&&y<map->getFloorHeight())
+                {
+                    v.setY(v.y()+0.001);
+                }
+                if(v.y()>0&&y>map->getFloorHeight()-5)
+                {
+                    v.setY(0);
+                }
+            }
+        }
+
+        if(x>(rockRec.left()-5)&&x<(rockRec.right()+5))
+        {
+            if(y>(rockRec.bottom()-h))
+            {
+                if(y>rockRec.bottom())
+                {}
+                else
+                {
+                    if(character->isLeftDown()&&x>rockRec.right())
+                    {
+                        v.setX(0);
+                    }
+                    if(character->isRightDown()&&x<rockRec.left())
+                    {
+                        v.setX(0);
+                    }
+                }
+
+            }
+            else
+            {
+                if(v.y()>0&&abs(y-rockRec.top())<5)
+                {
+                    v.setY(0);
+                }
+            }
+        }
+        else
+        {
+            if((abs(y-rockRec.top())<5&&v.y()==0))
+            {
+                v.setY(0.02);
+            }
+        }
+        if(x<0&&character->isLeftDown())                                                                    //控制人物不能离开左右边界
+        {
+            character->setPos(0,character->pos().y());
+        }
+        if(x>1280-character->sceneBoundingRect().width())
+        {
+            character->setPos(1280-character->sceneBoundingRect().width(),character->pos().y());
+        }
+        character->setVelocity(v);
+        if (!character->isLastPickDowm() &&character->isPickDown())                                         //拾取
+        { // first time pickDown
+            character->setPicking(true);
+        } else
+        {
+            character->setPicking(false);
+        }
+        bool is=character->isPickDown();
+        character->setLastPickDown(is);
+
+    }
+}
+
+void BattleScene::fall()                                                 //掉落间隔
+{
+    static int interval=0;
+    interval++;
+    if(interval<270)
+    {
+        return;
+    }
+
+     int num=rand()%(18);                                               //掉落，随机位置，随机物品
+     int x=rand()%(1270);
+    interval=0;
+     fallthing(x,num);
+}
+
+void BattleScene::handlefallthing()                                      //更新掉落物速度
+{
+    for (Item *item:totalfallthing)
+    {
+        gravity(item);
+
+    }
+}
+
+void BattleScene::deletefallthing()                                      //生成的掉落物品每隔一段时间消失
+{
+    static int num=0;
+     QPoint p(-200,-200);
+    num++;
+    if(num<500)
+    {
+        return ;
+    }
+
+    for(Item* item:totalfallthing)
+    {
+
+        if(item->pos().x()!=-200&&item->pos().y()!=-200)
+        {
+            if(item->parentItem()!=character&&item->parentItem()!=character_2)
+            {
+                item->setPos(p);
+                num=0;
+                break;
+            }
+        }
+
+    }
+}
+
+void BattleScene::fallthing(int x,int num)                               //生成掉落物
+{
+    switch (num)
+    {
+    case 1:
+    {   Armor * elecbreakerarmor=new ElecBreakerArmor();
+        elecbreakerarmor->setPos(x,0);
+        elecbreakerarmor->setScale(0.2);
+        elecbreakerarmor->unmount();
+        elecbreakerarmor->fall_v.setY(0);
+        elecbreakerarmor->fall_v.setX(0);
+        addItem(elecbreakerarmor);
+        totalfallthing.push_back(elecbreakerarmor);
+        break;
+    }
+    case 2:
+    {
+        Armor * flamebreakerarmor=new FlamebreakerArmor();
+        flamebreakerarmor->setPos(x,0);
+        flamebreakerarmor->setScale(0.4);
+        flamebreakerarmor->unmount();
+        flamebreakerarmor->fall_v.setX(0);
+        flamebreakerarmor->fall_v.setY(0);
+        addItem(flamebreakerarmor);
+        totalfallthing.push_back(flamebreakerarmor);
+        break;
+    }
+    case 3:
+    {
+        Armor * icebreakerarmor=new IceBreakerArmor();
+        icebreakerarmor->setPos(x,0);
+        icebreakerarmor->setScale(0.4);
+        icebreakerarmor->unmount();
+        icebreakerarmor->fall_v.setX(0);
+        icebreakerarmor->fall_v.setY(0);
+        addItem(icebreakerarmor);
+        totalfallthing.push_back(icebreakerarmor);
+        break;
+    }
+    case 4:
+    {
+        HeadEquipment * flamebreakerhead=new FlameBreakerHead();
+        flamebreakerhead->setPos(x,0);
+        flamebreakerhead->setScale(0.4);
+        flamebreakerhead->unmount();
+        flamebreakerhead->fall_v.setX(0);
+        flamebreakerhead->fall_v.setY(0);
+        addItem(flamebreakerhead);
+        totalfallthing.push_back(flamebreakerhead);
+        break;
+    }
+    case 5:
+    {
+        HeadEquipment * elecbreakerhead=new ElecBreakerHead();
+        elecbreakerhead->setPos(x,0);
+        elecbreakerhead->setScale(0.3);
+        elecbreakerhead->unmount();
+        elecbreakerhead->fall_v.setX(0);
+        elecbreakerhead->fall_v.setY(0);
+        addItem(elecbreakerhead);
+        totalfallthing.push_back(elecbreakerhead);
+        break;
+    }
+    case 6:
+    {
+        HeadEquipment * icebreakerhead=new IceBreakerHead();
+        icebreakerhead->setPos(x,0);
+        icebreakerhead->setScale(0.3);
+        icebreakerhead->unmount();
+        icebreakerhead->fall_v.setX(0);
+        icebreakerhead->fall_v.setY(0);
+        addItem(icebreakerhead);
+        totalfallthing.push_back(icebreakerhead);
+        break;
+    }
+    case 7:
+    {
+        LegEquipment * flamebreaketrou=new FlameBreakerTrou();
+        flamebreaketrou->setPos(x,0);
+        flamebreaketrou->setScale(0.4);
+        flamebreaketrou->unmount();
+        flamebreaketrou->fall_v.setX(0);
+        flamebreaketrou->fall_v.setY(0);
+        addItem(flamebreaketrou);
+        totalfallthing.push_back(flamebreaketrou);
+        break;
+    }
+    case 8:
+    {
+        LegEquipment * icebreaketrou=new IceBreakerTrou();
+        icebreaketrou->setPos(x,0);
+        icebreaketrou->setScale(0.4);
+        icebreaketrou->unmount();
+        icebreaketrou->fall_v.setX(0);
+        icebreaketrou->fall_v.setY(0);
+        addItem(icebreaketrou);
+        totalfallthing.push_back(icebreaketrou);
+        break;
+    }
+    case 9:
+    {
+        LegEquipment * elecbreaketrou=new ElecBreakerTrou();
+        elecbreaketrou->setPos(x,0);
+        elecbreaketrou->setScale(0.4);
+        elecbreaketrou->unmount();
+        elecbreaketrou->fall_v.setX(0);
+        elecbreaketrou->fall_v.setY(0);
+        addItem(elecbreaketrou);
+        totalfallthing.push_back(elecbreaketrou);
+        break;
+    }
+    case 10:
+    {
+        Sword *doubleicemetal=new Double_Ice_Metal();
+        doubleicemetal->setPos(x,0);
+        doubleicemetal->setScale(0.4);
+        doubleicemetal->unmount();
+        doubleicemetal->fall_v.setX(0);
+        doubleicemetal->fall_v.setY(0);
+        addItem(doubleicemetal);
+        totalfallthing.push_back(doubleicemetal);
+        break;
+    }
+    case 11:
+    {
+        Sword* longelecmetal=new Long_Elec_Metal();
+        longelecmetal->setPos(x,0);
+        longelecmetal->setScale(0.4);
+        longelecmetal->unmount();
+        longelecmetal->fall_v.setX(0);
+        longelecmetal->fall_v.setY(0);
+        addItem(longelecmetal);
+        totalfallthing.push_back(longelecmetal);
+        break;
+    }
+    case 12:
+    {
+        Sword* shortflamewooden=new Short_Flame_Wooden();
+        shortflamewooden->setPos(x,0);
+        shortflamewooden->setScale(0.4);
+        shortflamewooden->unmount();
+        shortflamewooden->fall_v.setX(0);
+        shortflamewooden->fall_v.setY(0);
+        addItem(shortflamewooden);
+        totalfallthing.push_back(shortflamewooden);
+        break;
+    }
+    case 13:
+    {
+        Bow* longicemetal=new Lone_Ice_Metal();
+        longicemetal->setPos(x,0);
+        longicemetal->setScale(0.4);
+        longicemetal->unmount();
+        longicemetal->fall_v.setX(0);
+        longicemetal->fall_v.setY(0);
+        addItem(longicemetal);
+        totalfallthing.push_back(longicemetal);
+        break;
+    }
+    case 14:
+    {
+        Bow*middleelecmetal=new Middle_Elec_Metal();
+        middleelecmetal->setPos(x,0);
+        middleelecmetal->setScale(0.4);
+        middleelecmetal->unmount();
+        middleelecmetal->fall_v.setX(0);
+        middleelecmetal->fall_v.setY(0);
+        addItem(middleelecmetal);
+        totalfallthing.push_back(middleelecmetal);
+        break;
+    }
+    case 15:
+    {
+        Bow* shortflamewooden=new Short_Flame_Wooden_Bow();
+        shortflamewooden->setPos(x,0);
+        shortflamewooden->setScale(0.4);
+        shortflamewooden->unmount();
+        shortflamewooden->fall_v.setX(0);
+        shortflamewooden->fall_v.setY(0);
+        addItem(shortflamewooden);
+        totalfallthing.push_back(shortflamewooden);
+        break;
+    }
+    case 16:
+    {
+        Arrow* elecarrow=new Elec_Arrow();
+        elecarrow->setPos(x,0);
+        elecarrow->setScale(0.2);
+        elecarrow->unmount();
+        elecarrow->fall_v.setX(0);
+        elecarrow->fall_v.setY(0);
+        addItem(elecarrow);
+        totalfallthing.push_back(elecarrow);
+        break;
+    }
+    case 17:
+    {
+        Arrow* icearrow=new Ice_Arrow();
+        icearrow->setPos(x,0);
+        icearrow->setScale(0.2);
+        icearrow->unmount();
+        icearrow->fall_v.setX(0);
+        icearrow->fall_v.setY(0);
+        addItem(icearrow);
+        totalfallthing.push_back(icearrow);
+        break;
+    }
+    case 18:
+    {
+        Arrow* flamearrow=new Flame_Arrow();
+        flamearrow->setPos(x,0);
+        flamearrow->setScale(0.2);
+        flamearrow->unmount();
+        flamearrow->fall_v.setX(0);
+        flamearrow->fall_v.setY(0);
+        addItem(flamearrow);
+        totalfallthing.push_back(flamearrow);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+void BattleScene::handleCheatLine()                                      //设置信号与槽，摁下回车则调用fallthing函数
+{
+    QString text=lineEdit->text();
+    int num=0;
+    if(text.toInt()!=0&&text.length()==2)
+    {
+        num=text.toInt();
+    }
+    int x=rand()%(1270);
+    fallthing(x,num);
+}
+
+void BattleScene::attack()                                               //近战武器攻击
+{
+    static int num=0;num++;
+    if(num<30)
+    {
+        return;
+    }
+
+    num=0;
+    if(!character->ice_attacked)                                        //没有被冰冻，可以进行攻击
+    {
+        if(character->isAttackDown())
+        {
+            character->characterattack(character_2);
+            if(character_2->lifevalue<0)
+            {
+                character_2->bloodbar->setValue(0);
+            }
+            else
+            {
+                character_2->bloodbar->setValue(character_2->lifevalue);
+            }
+        }
+    }
+    if(!character_2->ice_attacked)
+    {
+        if(character_2->isAttackDown())
+        {
+            character_2->characterattack(character);
+            if(character->lifevalue<0)
+            {
+                character->bloodbar->setValue(0);
+            }
+            else
+            {
+                character->bloodbar->setValue(character->lifevalue);
+            }
+        }
+    }
+
+    character->showstate();
+    character_2->showstate();
+}
+
+void BattleScene::changeweapon()
+{
+    if(character->ischangeweaponDown()&&!character->ice_attacked)
+    {
+        character->changeWeapon();
+    }
+    if(character_2->ischangeweaponDown()&&!character_2->ice_attacked)
+    {
+        character_2->changeWeapon();
+    }
+}
+
+void BattleScene::cast()                                                 //投掷近战武器和射箭，设置初速度
+{
+    static int num=0;                                                   //设置有效投掷间隔
+    num++;
+    if(num<50)
+    {
+        return;
+    }
+    num=0;
+    if(!character->ice_attacked)                                        //被冰冻不能进行任何操作
+    {
+        if(character->isCastDown()&&character->now_weapon!=NULL)
+        {
+            if(character->now_weapon==character->sword)                 //当前使用近战武器
+            {
+                static Sword* castthing=NULL;
+                castthing=character->getsword();
+                if(castthing!=NULL)
+                {
+                    castthing->setPos(character->pos().x(),character->pos().y()-130);
+                    if(character->isFace())
+                    {
+                        castthing->fall_v.setX(0.6);                    //投掷初速度
+                    }
+                    else
+                    {
+                        castthing->fall_v.setX(-0.6);
+                    }
+                    totalcasting.push_back(castthing);                  //加入投掷物数组，用于计算速度，更新坐标
+
+                    character->charactercast();
+                }
+            }
+            else                                                        //当前使用武器为弓箭，处理箭头，因为是同一个按键操作，所有将投掷的近战武器和箭放在cast函数中
+            {
+                character->setattackstate(true);
+                int num=character->bow->arrownum;
+                int distance=character->bow->attackdistance;
+                static Arrow * shootedarrow=NULL;
+                for(int i=0;i<num;i++)
+                {
+                    shootedarrow=character->getshootedarrow();
+                    if(shootedarrow!=NULL)
+                    {
+                        shootedarrow->setPos(character->pos().x(),character->pos().y()-100);
+                        if(character->isFace())                         //确定人物朝向
+                        {
+                            if(distance==900)                           //根据不同弓的射程确定不同的初速度
+                            {
+                                shootedarrow->fall_v.setX(3);
+                                shootedarrow->setRotation(45);
+                            }
+                            if(distance==650)
+                            {
+                                shootedarrow->fall_v.setX(2.4);
+                                shootedarrow->setRotation(45);
+                            }
+                            if(distance==400)
+                            {
+                                shootedarrow->fall_v.setX(1.8);
+                                shootedarrow->setRotation(45);
+                            }
+                        }
+                        else
+                        {
+                            if(distance==900)
+                            {
+                                shootedarrow->fall_v.setX(-3);
+                                shootedarrow->setRotation(225);
+                            }
+                            if(distance==650)
+                            {
+                                shootedarrow->fall_v.setX(-2.4);
+                                shootedarrow->setRotation(225);
+                            }
+                            if(distance==400)
+                            {
+                                shootedarrow->fall_v.setX(-1.8);
+                                shootedarrow->setRotation(225);
+                            }
+                        }
+                        for(int i=0;i<10000000;i++)
+                        {
+                            ;
+                        }
+                        totalshooted.push_back(shootedarrow);
+                        character->shootarrow();
+                    }
+                }
+            }
+        }
+    }
+    if(!character_2->ice_attacked)                                                      //人物二同理
+    {
+        if(character_2->isCastDown()&&character_2->now_weapon!=NULL)
+        {
+            if(character_2->now_weapon==character_2->sword)
+            {
+                character_2->setattackstate(true);
+                static Sword* castthing=NULL;
+                castthing=character_2->getsword();
+                if(castthing!=NULL)
+                {
+                    castthing->setPos(character_2->pos().x(),character_2->pos().y()-130);
+                    if(character_2->isFace())
+                    {
+                        castthing->fall_v.setX(0.6);
+                    }
+                    else
+                    {
+                        castthing->fall_v.setX(-0.6);
+                    }
+                    totalcasting_2.push_back(castthing);
+
+                    character_2->charactercast();
+                }
+            }
+            else
+            {
+                int num=character_2->bow->arrownum;
+                int distance=character_2->bow->attackdistance;
+                static Arrow * shootedarrow=NULL;
+                for(int i=0;i<num;i++)
+                {
+                    shootedarrow=character_2->getshootedarrow();
+                    if(shootedarrow!=NULL)
+                    {
+                        shootedarrow->setPos(character_2->pos().x(),character_2->pos().y()-100);
+                        if(character_2->isFace())
+                        {
+                            if(distance==900)
+                            {
+                                shootedarrow->fall_v.setX(3);
+                                shootedarrow->setRotation(45);
+                            }
+                            if(distance==650)
+                            {
+                                shootedarrow->fall_v.setX(2.4);
+                                shootedarrow->setRotation(45);
+                            }
+                            if(distance==400)
+                            {
+                                shootedarrow->fall_v.setX(1.8);
+                                shootedarrow->setRotation(45);
+                            }
+                        }
+                        else
+                        {
+                            if(distance==900)
+                            {
+                                shootedarrow->fall_v.setX(-3);
+                                shootedarrow->setRotation(225);
+                            }
+                            if(distance==650)
+                            {
+                                shootedarrow->fall_v.setX(-2.4);
+                                shootedarrow->setRotation(225);
+                            }
+                            if(distance==400)
+                            {
+                                shootedarrow->fall_v.setX(-1.8);
+                                shootedarrow->setRotation(225);
+                            }
+                        }
+                        for(int i=0;i<10000000;i++)
+                        {
+                            ;
+                        }
+                        totalshooted_2.push_back(shootedarrow);
+                        character_2->shootarrow();
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+void BattleScene::gravity(Item *item)                                    //重力的实现
+{
+    int x=item->pos().x();
+    int y=item->pos().y();
+
+    if(item->parentItem()!=character&&item->parentItem()!=character_2)  //处理那些没有被捡起的物品
+    {
+        if(x>=0&&x<270)                                                 //根据横坐标不同，讨论不同的落点
+        {
+            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+            }
+            else
+            {
+                item->fall_v.setY(0);
+            }
+            if(y>map->getFloorHeight()-10)
+            {
+                item->setPos(x,map->getFloorHeight());
+            }
+        }
+        else if(x>=270&&x<(270+iceplat->boundingRect().width()))
+        {
+            if(item->fall_v.y()>=0&&y<(300-30))
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+            }
+            else
+            {
+                item->fall_v.setY(0);
+            }
+            if(y>290)
+            {
+                item->setPos(x,300);
+            }
+        }
+        else if(x>=(270+iceplat->boundingRect().width())&&x<560)
+        {
+            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+            }
+            else
+            {
+                item->fall_v.setY(0);
+            }
+            if(y>(map->getFloorHeight()-10))
+            {
+                item->setPos(x,map->getFloorHeight());
+            }
+        }
+        else if(x>=560&&x<(560+rockplat->boundingRect().width()))
+        {
+            if(item->fall_v.y()>=0&&y<(110)&&y!=-120)
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+            }
+            else if(item->fall_v.y()>0&&y>=110&&y<150)
+            {
+                item->fall_v.setY(0);
+                item->setPos(x,120);
+            }
+             if(y>170)
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+                 if(y>map->getFloorHeight())
+                {
+                    item->setPos(-120,-120);
+                    item->fall_v.setX(0);
+                    item->fall_v.setY(0);
+                 }
+            }
+
+        }
+        else if(x>=(560+rockplat->boundingRect().width())&&x<1000)
+        {
+            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            {
+                item->fall_v.setY(item->fall_v.y()+0.015);
+            }
+            else
+            {
+                item->fall_v.setY(0);
+            }
+            if(y>map->getFloorHeight()-10)
+            {
+                item->setPos(x,map->getFloorHeight());
+            }
+        }
+        else
+        {
+            if(fireplat->pos().x()==-1000)
+            {
+                if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                {
+                    item->fall_v.setY(item->fall_v.y()+0.015);
+                }
+                else
+                {
+                    item->fall_v.setY(0);
+                }
+                if(y>map->getFloorHeight()-10)
+                {
+                    item->setPos(x,map->getFloorHeight());
+                }
+            }
+            else
+            {
+                if(item->fall_v.y()>=0&&y<(320-30))
+                {
+                    item->fall_v.setY(item->fall_v.y()+0.015);
+                }
+                else
+                {
+                    item->fall_v.setY(0);
+                }
+                if(y>310)
+                {
+                    item->setPos(x,320);
+                }
+            }
+
+        }
+    }
+
+}
+
+void BattleScene::handlecastthing()
+{
+    for(Sword* item:totalcasting)                                               //人物一所投掷的近战武器，位置更新和伤害判定
+    {
+        if(item->pos().x()>0)
+        {
+            int x=item->pos().x();
+            int y=item->pos().y();
+
+            if(item->parentItem()!=character&&item->parentItem()!=character_2)  //判断武器的位置，时刻检测是否碰撞
+            {
+                if(x>=0&&x<270)                                                 //根据横坐标不同，确定不同的落点
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                    }
+                    if(y>map->getFloorHeight()-10)
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else if(x>=270&&x<(270+iceplat->boundingRect().width()))
+                {
+                    if(item->fall_v.y()>=0&&y<(300-30))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                        if(item->element=="Elec")
+                        {
+                            iceplat->elecItem->setVisible(true);
+                            iceplat->elec_attacked=true;
+                        }
+                    }
+                    if(y>290)
+                    {
+                        item->setPos(x,300);
+                    }
+                }
+                else if(x>=(270+iceplat->boundingRect().width())&&x<560)
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                    }
+                    if(y>(map->getFloorHeight()-10))
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else if(x>=560&&x<(560+rockplat->boundingRect().width()))
+                {
+                    if(item->fall_v.y()>=0&&y<(150-30)&&y!=-120)
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                     if(item->fall_v.y()>0&&y>=120&&y<140)
+                    {
+                        item->fall_v.setY(0);
+
+                        item->setPos(x,150);
+                        if(item->element=="Ice")
+                        {
+                            rockplat->iceItem->setVisible(true);
+                            rockplat->ice_attacked=true;
+                        }
+                    }
+                    if(y>170)
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                        if(y>map->getFloorHeight())
+                        {
+                            item->fall_v.setX(0);
+                            item->fall_v.setY(0);
+                            item->setPos(-120,-120);
+
+                        }
+                    }
+
+                }
+                else if(x>=(560+rockplat->boundingRect().width())&&x<1000)
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+
+                    }
+                    if(y>map->getFloorHeight()-10)
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else
+                {
+                    if(item->fall_v.y()>=0&&y<(320-30))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                        if(item->element=="Flame")
+                        {
+                            fireplat->flameItem->setVisible(true);
+                            fireplat->flame_attacked=true;
+                        }
+
+                    }
+                    if(y>310)
+                    {
+                        item->setPos(x,320);
+                    }
+                }
+            }
+            int distance=QLineF(item->pos(),character_2->pos()).length();               //如果碰到人，则产生一次攻击效果
+            if(distance<100)
+            {
+                item->fall_v.setY(0);
+                int elec=item->elec_value-character_2->protect_elec;
+                int ice=item->ice_value-character_2->protect_ice;
+                int flame=item->flame_value-character_2->protect_flame;
+                int sum=elec+ice+flame;
+
+                if(item->element=="Elec")                                               //根据元素属性，播放相应的攻击效果
+                {
+                    character_2->elec_attacked=true;
+                    character_2->elecItem->setVisible(true);
+                    if(character_2->ice_attacked)                                       //被冰冻伤害翻倍，立即接触冰冻
+                    {
+                        sum*=2;
+                        character_2->ice_attacked=false;
+                        character_2->iceItem->setVisible(false);
+                    }
+                }
+                else if(item->element=="Ice")
+                {
+                    character_2->ice_attacked=true;
+                    character_2->iceItem->setVisible(true);
+                    if(character_2->ice_attacked)
+                    {
+                        sum*=2;
+
+                    }
+
+                }
+                else if(item->element=="Flame")
+                {
+                    character_2->flame_attacked=true;
+                    character_2->flameItem->setVisible(true);
+                    if(character_2->ice_attacked)
+                    {
+                        sum*=2;
+                        character_2->ice_attacked=false;
+                        character_2->iceItem->setVisible(false);
+                    }
+                }
+
+                character_2->lifevalue-=sum;
+                character_2->bloodbar->setValue(character_2->lifevalue);
+
+            }
+            if(item->fall_v.y()==0&&item->pos().y()>0)
+            {
+                item->setPos(-120,-120);
+                item->fall_v.setX(0);
+            }
+        }
+
+    }
+    for(Sword* item:totalcasting_2)                                                         //人物二所投掷的近战武器，位置更新和伤害判定
+    {
+        if(item->pos().x()>0)
+        {
+            int x=item->pos().x();
+            int y=item->pos().y();
+
+            if(item->parentItem()!=character&&item->parentItem()!=character_2)
+            {
+                if(x>=0&&x<270)
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                    }
+                    if(y>map->getFloorHeight()-10)
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else if(x>=270&&x<(270+iceplat->boundingRect().width()))
+                {
+                    if(item->fall_v.y()>=0&&y<(300-30))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                        if(item->element=="Elec")
+                        {
+                            iceplat->elecItem->setVisible(true);
+                            iceplat->elec_attacked=true;
+                        }
+                    }
+                    if(y>290)
+                    {
+                        item->setPos(x,300);
+                    }
+                }
+                else if(x>=(270+iceplat->boundingRect().width())&&x<560)
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                    }
+                    if(y>(map->getFloorHeight()-10))
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else if(x>=560&&x<(560+rockplat->boundingRect().width()))
+                {
+                    if(item->fall_v.y()>=0&&y<(150-30)&&y!=-120)
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else if(item->fall_v.y()>0&&y>=120&&y<150)
+                    {
+                        item->fall_v.setY(0);
+
+                        item->setPos(x,150);
+                        if(item->element=="Ice")
+                        {
+                            rockplat->iceItem->setVisible(true);
+                            rockplat->ice_attacked=true;
+                        }
+                    }
+                    if(y>150)
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                        if(y>map->getFloorHeight())
+                        {
+                            item->fall_v.setX(0);
+                            item->fall_v.setY(0);
+                            item->setPos(-120,-120);
+
+                        }
+                    }
+
+                }
+                else if(x>=(560+rockplat->boundingRect().width())&&x<1000)
+                {
+                    if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+
+                    }
+                    if(y>map->getFloorHeight()-10)
+                    {
+                        item->setPos(x,map->getFloorHeight());
+                    }
+                }
+                else
+                {
+                    if(item->fall_v.y()>=0&&y<(320-30))
+                    {
+                        item->fall_v.setY(item->fall_v.y()+0.015);
+                    }
+                    else
+                    {
+                        item->fall_v.setY(0);
+                        if(item->element=="Flame")
+                        {
+                            fireplat->flameItem->setVisible(true);
+                            fireplat->flame_attacked=true;
+                        }
+
+                    }
+                    if(y>310)
+                    {
+                        item->setPos(x,320);
+                    }
+                }
+            }
+
+            int distance=QLineF(item->pos(),character->pos()).length();
+            if(distance<100)
+            {
+                item->fall_v.setY(0);
+                int elec=item->elec_value-character->protect_elec;
+                int ice=item->ice_value-character->protect_ice;
+                int flame=item->flame_value-character->protect_flame;
+                int sum=elec+ice+flame;
+
+                if(item->element=="Elec")
+                {
+                    character->elec_attacked=true;
+                    character->elecItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+                        character->ice_attacked=false;
+                        character->iceItem->setVisible(false);
+                    }
+                }
+                else if(item->element=="Ice")
+                {
+                    character->ice_attacked=true;
+                    character->iceItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+                    }
+                }
+                else if(item->element=="Flame")
+                {
+                    character->flame_attacked=true;
+                    character->flameItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+                        character->ice_attacked=false;
+                        character->iceItem->setVisible(false);
+                    }
+                }
+
+                character->lifevalue-=sum;
+                character->bloodbar->setValue(character->lifevalue);
+            }
+            if(item->fall_v.y()==0&&item->pos().y()>0)
+            {
+                item->setPos(-120,-120);
+                item->fall_v.setX(0);
+            }
+        }
+
+    }
+    for(Arrow* item:totalshooted_2)                                                         //人物二所射出的箭头，位置更新和伤害判定
+    {
+        if(item->pos().x()>0)
+        {
+            gravity(item);
+
+            int distance=QLineF(item->pos(),character->pos()).length();                     //判断射出的箭是否打到对方，计算伤害并更新生命值
+            if(distance<200)
+            {
+                item->fall_v.setY(0);
+                int elec=item->elec_value+character_2->bow->elec_value-character->protect_elec;
+                int ice=item->ice_value+character_2->bow->ice_value-character->protect_ice;
+                int flame=item->flame_value+character_2->bow->flame_value-character->protect_flame;
+                int sum=elec+ice+flame;
+                if(item->element=="Elec")                                                   //根据箭头的属性，播放相应的攻击效果
+                {
+                    character->elec_attacked=true;
+                    character->elecItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+                        character->ice_attacked=false;
+                        character->iceItem->setVisible(false);
+                    }
+                }
+                else if(item->element=="Ice")
+                {
+                    character->ice_attacked=true;
+                    character->iceItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+
+                    }
+                }
+                else if(item->element=="Flame")                                             //冰属性下伤害翻倍，并且立即解除冰冻状态
+                {
+                    character->flame_attacked=true;
+                    character->flameItem->setVisible(true);
+                    if(character->ice_attacked)
+                    {
+                        sum*=2;
+                        character->ice_attacked=false;
+                        character->iceItem->setVisible(false);
+                    }
+                }
+
+                character->lifevalue-=sum;
+                character->bloodbar->setValue(character->lifevalue);
+
+            }
+            if(item->fall_v.y()==0&&item->pos().y()>0)
+            {
+                item->setPos(-120,-120);
+                item->fall_v.setX(0);
+            }
+        }
+    }
+    for(Arrow* item:totalshooted)                                                                           //人物二所射出的箭头，位置更新和伤害判定，以下与人物以同理
+    {
+        if(item->pos().x()>0)
+        {
+            gravity(item);
+
+            int distance=QLineF(item->pos(),character_2->pos()).length();
+            if(distance<200)
+            {
+                item->fall_v.setY(0);
+                int elec=item->elec_value+character->bow->elec_value-character_2->protect_elec;
+                int ice=item->ice_value+character->bow->ice_value-character_2->protect_ice;
+                int flame=item->flame_value+character->bow->flame_value-character_2->protect_flame;
+                int sum=elec+ice+flame;
+
+                if(item->element=="Elec")
+                {
+                    character_2->elec_attacked=true;
+                    character_2->elecItem->setVisible(true);
+                    if(character_2->ice_attacked)
+                    {
+                        sum*=2;
+                        character_2->ice_attacked=false;
+                        character_2->iceItem->setVisible(false);
+                    }
+                }
+                else if(item->element=="Ice")
+                {
+                    character_2->ice_attacked=true;
+                    character_2->iceItem->setVisible(true);
+                    if(character_2->ice_attacked)
+                    {
+                        sum*=2;
+                    }
+                }
+                else if(item->element=="Flame")
+                {
+                    character_2->flame_attacked=true;
+                    character_2->flameItem->setVisible(true);
+                    if(character_2->ice_attacked)
+                    {
+                        sum*=2;
+                        character_2->ice_attacked=false;
+                        character_2->iceItem->setVisible(false);
+                    }
+                }
+
+                character_2->lifevalue-=sum;
+                character_2->bloodbar->setValue(character_2->lifevalue);
+            }
+            if(item->fall_v.y()==0&&item->pos().y()>0)
+            {
+                item->setPos(-120,-120);
+                item->fall_v.setX(0);
+            }
+        }
+    }
+
+}
+
+void BattleScene::isgameover()                                          //判断游戏是否结束（一方生命值小于0，判断另一方获胜）
+{
+    if(character->lifevalue<0)
+    {
+        character->bloodbar->setValue(0);
+        gameover("玩家二胜利");
+    }
+    if(character_2->lifevalue<0)
+    {
+        character_2->bloodbar->setValue(0);
+        gameover("玩家一胜利");
+    }
+
+}
+
+void BattleScene::gameover(QString text)                                //游戏结束弹出提示框，显示某方获胜，并关闭程序
+{
+
+    QMessageBox::critical(nullptr, "Game Over", text);
+    timer->stop();
+    QApplication::quit();
+}
+
+void BattleScene::changearrow()
+{
+    if(character->ischangearrowDown()&&!character->ice_attacked)        //人物被冰冻时不能进行其他操作
+    {
+        character->changenow_arrow();
+    }
+    if(character_2->ischangearrowDown()&&!character_2->ice_attacked)
+    {
+        character_2->changenow_arrow();
+    }
+}
+
+void BattleScene::attackanimation()                                     //判断场上物品的受击状态，显示其受击效果（燃烧，触电，冰冻），以及人物攻击动画
+{
+    if(character->isattack())                                                       //人物的攻击动画
+    {
+        if(character->now_weapon!=NULL)
+        {
+            bool nowface=character->isFace();
+            if(dynamic_cast<Double_Ice_Metal*>(character->now_weapon))              //双手刀实现两面攻击。用人物转身示意
+            {
+                static int num=0;
+                character->now_weapon->setRotation(num*9);                          //有效攻击判定
+
+                num++;
+                if(num==20)
+                {
+                    if(nowface==false)
+                    {
+                        character->setTransform(QTransform().scale(-1, 1));
+                        character->setface(true);
+
+                    }
+                    else
+                    {
+                        character->setTransform(QTransform().scale(1, 1));
+                        character->setface(false);
+
+                    }
+                }
+                if(num>40)
+                {
+                    num=0;
+                    character->setattackstate(false);
+                }
+
+            }
+            else                                                                    //其余武器攻击时只是旋转，不用转身
+            {
+                static int num=0;
+                character->now_weapon->setRotation(num*9);
+
+                num++;
+                if(num>40)
+                {
+                    character->setattackstate(false);
+                    num=0;
+                }
+            }
+
+        }
+
+    }
+    if(character_2->isattack())
+    {
+        if(character_2->now_weapon!=NULL)
+        {
+            bool nowface=character_2->isFace();
+            if(dynamic_cast<Double_Ice_Metal*>(character_2->now_weapon))
+            {
+                static int num=0;
+                character_2->now_weapon->setRotation(num*9);
+
+                num++;
+                if(num==20)
+                {
+                    if(nowface==false)
+                    {
+                        character_2->setTransform(QTransform().scale(-1, 1));
+                        character_2->setface(true);
+
+                    }
+                    else
+                    {
+                        character_2->setTransform(QTransform().scale(1, 1));
+                        character_2->setface(false);
+
+                    }
+                }
+                if(num>40)
+                {
+                    num=0;
+                    character_2->setattackstate(false);
+                }
+
+            }
+            else
+            {
+                static int num=0;
+                character_2->now_weapon->setRotation(num*9);
+
+                num++;
+                if(num>40)
+                {
+                    character_2->setattackstate(false);
+                    num=0;
+                }
+            }
+
+        }
+
+    }
+    for(QGraphicsItem*item:items())                                                     //处理其他所有物品的受击效果
+    {
+        if(auto m_item=dynamic_cast<Item*>(item))
+        {
+            if(m_item->flame_attacked)
+            {
+
+                if(auto hero=dynamic_cast<Link*>(item))                                 //人物着火时持续受到伤害
+                {
+                    static int num_1=0;
+                    num_1++;
+                    if(num_1%50==0)
+                    {
+                        hero->lifevalue-=1;
+                        hero->bloodbar->setValue(hero->lifevalue);
+                    }
+
+                    if(num_1>250)
+                    {
+                        num_1=0;
+                        hero->flame_attacked=false;
+                        hero->flameItem->setVisible(false);
+                    }
+                    if(hero->now_weapon!=NULL)                                          //检测手中的弓或剑是否是木制
+                    {
+                        if(auto weapon=dynamic_cast<Sword*>(hero->now_weapon))
+                        {
+                            if(weapon->material=="Wooden")
+                            {
+                                hero->now_weapon->flameItem->setVisible(true);
+                                hero->now_weapon->flame_attacked=true;
+                            }
+                            dynamic_cast<Item*>(hero->now_weapon);
+                        }
+                        else
+                        {
+                            if(auto weapon=dynamic_cast<Bow*>(hero->now_weapon))
+                            {
+                                if(weapon->material=="Wooden")
+                                {
+                                    hero->now_weapon->flameItem->setVisible(true);
+                                    hero->now_weapon->flame_attacked=true;
+                                }
+                                dynamic_cast<Item*>(hero->now_weapon);
+                            }
+                        }
+
+                    }
+
+
+                }
+                else                                                                    //其他物品点燃后过一段时间会消失
+                {
+                    static int num_1=0;
+                    static int life=0;
+                    num_1++;
+                    if(num_1>250)
+                    {
+                        num_1=0;
+                        life++;
+                        m_item->flame_attacked=false;
+                        m_item->flameItem->setVisible(false);
+                    }
+                    if(life>3)
+                    {
+                        m_item->setPos(-1000,-1000);
+                        fireplat->setPos(-1000,-1000);
+                        life=0;
+                    }
+                }
+            }
+            if(m_item->ice_attacked)                                                  //被冰属性攻击后人物被冰冻
+            {
+                    static int num_2=0;
+                    num_2++;
+                    if(num_2>250)
+                    {
+                        num_2=0;
+                        m_item->ice_attacked=false;
+                        m_item->iceItem->setVisible(false);
+                    }
+
+
+            }
+            if(m_item->elec_attacked)                                                   //被电击的攻击效果
+            {
+
+                if(auto hero=dynamic_cast<Link*>(item))                                 //人物被电击，受到持续伤害
+                {
+                    static int num_3=0;
+                    num_3++;
+                    if(num_3%50==0)
+                    {
+                        hero->lifevalue-=1;
+                        hero->bloodbar->setValue(hero->lifevalue);
+                    }
+
+                    if(num_3>250)
+                    {
+                        num_3=0;
+                        hero->elec_attacked=false;
+                        hero->elecItem->setVisible(false);
+                    }
+                    if(hero->now_weapon!=NULL)                                          //检测手中的弓或剑是否是金属材质，如果是金属材质，则掉落需重新捡起
+                    {
+                        if(auto weapon=dynamic_cast<Sword*>(hero->now_weapon))
+                        {
+                            if(weapon->material=="Metal")
+                            {
+                                auto castthing=hero->getsword();
+                                castthing->setPos(hero->pos().x(),hero->pos().y()-80);
+                                hero->charactercast();
+                            }
+                            dynamic_cast<Item*>(hero->now_weapon);
+                        }
+                        else
+                        {
+                            if(auto weapon=dynamic_cast<Bow*>(hero->now_weapon))
+                            {
+                                if(weapon->material=="Metal")
+                                {
+                                    auto castthing=hero->getbow();
+                                    castthing->setPos(hero->pos().x(),hero->pos().y()-80);
+                                    hero->characterdropbow();
+                                }
+                                dynamic_cast<Item*>(hero->now_weapon);
+                            }
+                        }
+
+                    }
+
+                }
+                else                                                                    //其他物品被电击，显现电击效果
+                {
+                    static int num_3=0;
+                    num_3++;
+                    if(num_3>250)
+                    {
+                        num_3=0;
+                        m_item->elec_attacked=false;
+                        m_item->elecItem->setVisible(false);
+                    }
+                }
+
+            }
+
+        }
+        dynamic_cast<Item*>(item);
+
+
+   }
+
+
+}
+
+void BattleScene::burnt()
+{
+    if(fireplat->flame_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Wooden")                                                           //木制平台燃烧导致周围木制武器（弓和箭，无论是否捡起）被点燃
+                {
+                    if(sword->pos().x()>1000&&sword->pos().y()>150&&sword->pos().y()<340)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Wooden")
+                {
+                    if(sword->pos().x()>1000&&sword->pos().y()>200&&sword->pos().y()<340)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(character->pos().x()>1000&&character->pos().y()>200&&character->pos().y()<340)                   //人在着火平台旁会持续受到伤害
+        {
+            character->flameItem->setVisible(true);
+            character->flame_attacked=true;
+        }
+        if(character_2->pos().x()>1000&&character_2->pos().y()>200&&character_2->pos().y()<340)
+        {
+            character_2->flameItem->setVisible(true);
+            character_2->flame_attacked=true;
+        }
+    }
+    if(character->flame_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Wooden")                                                           //人物移动点燃周围木制物品
+                {
+                    if(abs(sword->pos().x()-character->pos().x())<100&&abs(sword->pos().y()-character->pos().y())<100)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Wooden")
+                {
+                    if(abs(sword->pos().x()-character->pos().x())<100&&abs(sword->pos().y()-character->pos().y())<100)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(abs(character->pos().x()-character_2->pos().x())<100&&abs(character->pos().y()-character_2->pos().y())<100)
+        {
+            character_2->flameItem->setVisible(true);
+            character_2->flame_attacked=true;
+        }
+
+    }
+
+    if(character_2->flame_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Wooden")
+                {
+                    if(abs(sword->pos().x()-character_2->pos().x())<100&&abs(sword->pos().y()-character_2->pos().y())<100)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Wooden")
+                {
+                    if(abs(sword->pos().x()-character_2->pos().x())<100&&abs(sword->pos().y()-character_2->pos().y())<100)
+                    {
+                        sword->flame_attacked=true;
+                        sword->flameItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(abs(character->pos().x()-character_2->pos().x())<150&&abs(character->pos().y()-character_2->pos().y())<150)
+        {
+            character->flameItem->setVisible(true);
+            character->flame_attacked=true;
+        }
+
+    }
+}
+
+void BattleScene::elecspread()                                          //金属平台触电时传到至周围金属物品和人物
+{
+    if(iceplat->elec_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Metal")
+                {
+                    if(sword->pos().x()>240&&sword->pos().x()<450&&sword->pos().y()>250&&sword->pos().y()<400)  //电流传导距离阈值
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Metal")
+                {
+                    if(sword->pos().x()>1000&&sword->pos().y()>200&&sword->pos().y()<400)
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(character->pos().x()>240&&character->pos().x()<450&&character->pos().y()>200&&character->pos().y()<340)          //人物在导电平台附近会受到电击
+        {
+            character->elecItem->setVisible(true);
+            character->elec_attacked=true;
+        }
+        if(character_2->pos().x()>240&&character_2->pos().x()<450&&character_2->pos().y()>200&&character_2->pos().y()<340)
+        {
+            character_2->elecItem->setVisible(true);
+            character_2->elec_attacked=true;
+        }
+    }
+    if(character->elec_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Metal")                                                           //人物移动导致周围金属物品触电
+                {
+                    if(abs(sword->pos().x()-character->pos().x())<100&&abs(sword->pos().y()-character->pos().y())<100)
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Metal")
+                {
+                    if(abs(sword->pos().x()-character->pos().x())<100&&abs(sword->pos().y()-character->pos().y())<100)
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(abs(character->pos().x()-character_2->pos().x())<100&&abs(character->pos().y()-character_2->pos().y())<100)
+        {
+            character_2->elecItem->setVisible(true);
+            character_2->elec_attacked=true;
+        }
+
+    }
+
+    if(character_2->elec_attacked)
+    {
+        for(Item* item:totalfallthing)
+        {
+            if(auto sword=dynamic_cast<Sword*>(item))
+            {
+                if(sword->material=="Metal")
+                {
+                    if(abs(sword->pos().x()-character_2->pos().x())<100&&abs(sword->pos().y()-character_2->pos().y())<100)
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            else if(auto sword=dynamic_cast<Bow*>(item))
+            {
+                if(sword->material=="Metal")
+                {
+                    if(abs(sword->pos().x()-character_2->pos().x())<100&&abs(sword->pos().y()-character_2->pos().y())<100)
+                    {
+                        sword->elec_attacked=true;
+                        sword->elecItem->setVisible(true);
+                    }
+                }
+            }
+            dynamic_cast<Item*>(item);
+
+        }
+        if(abs(character->pos().x()-character_2->pos().x())<150&&abs(character->pos().y()-character_2->pos().y())<150)
+        {
+            character->elecItem->setVisible(true);
+            character->elec_attacked=true;
+        }
+
+    }
+
+}
+
+Mountable *BattleScene::findNearestUnmountedMountable(const QPointF &pos, qreal distance_threshold)
+{
+    Mountable *nearest = nullptr;
+    qreal minDistance = distance_threshold;
+
+    for (QGraphicsItem *item: items())
+    {
+        if (auto mountable = dynamic_cast<Mountable *>(item))       //判断是否可以拾取
+        {
+            if (!mountable->isMounted())                            //有拾取属性，是否已经被拾取
+            {
+                qreal distance = QLineF(pos, item->pos()).length();
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = mountable;
+                }
+            }
+        }
+    }
+
+    return nearest;                                                 //寻找周围可拾取的最近物品
+}
+
+Mountable *BattleScene::pickupMountable(Character *character, Mountable *mountable)
+{
+    //检测拾取物品是什么类型，调用对应的函数
+    if (auto armor = dynamic_cast<Armor *>(mountable))
+    {
+        return character->pickupArmor(armor);
+    }
+    else if (auto legarmor = dynamic_cast<LegEquipment *>(mountable))
+    {
+        return character->pickupLegArmor(legarmor);
+    }
+    else if (auto headarmor = dynamic_cast<HeadEquipment *>(mountable))
+    {
+        return character->pickupHeadArmor(headarmor);
+    }
+    else if (auto newSword = dynamic_cast<Sword *>(mountable))
+    {
+        return character->pickupSword(newSword);
+    }
+    else if (auto newBow = dynamic_cast<Bow *>(mountable))
+    {
+        return character->pickupBow(newBow);
+    }
+    return nullptr;
+}
+
