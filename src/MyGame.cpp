@@ -13,3 +13,5 @@ MyGame::MyGame(QWidget *parent) : QMainWindow(parent)
     setFixedSize(view->sizeHint());
     battleScene->startLoop();
 }
+
+// first change wty
