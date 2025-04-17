@@ -194,7 +194,7 @@ void Character::characterattack(Character *other)
                 }
             }
         }
-        dynamic_cast<Item*>(now_weapon);
+        (void)dynamic_cast<Item*>(now_weapon);
         return;
     }
 
@@ -404,12 +404,12 @@ void Character::changenow_arrow()                                               
     {
         if(dynamic_cast<Elec_Arrow*>(now_arrow))                                            //当前为电属性箭头，则换位冰属性
         {
-            dynamic_cast<Arrow*>(now_arrow);
+            (void)dynamic_cast<Arrow*>(now_arrow);
             for(int i=0;i<20;i++)
             {
                 if(dynamic_cast<Ice_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;
@@ -419,7 +419,7 @@ void Character::changenow_arrow()                                               
             {
                 if(dynamic_cast<Flame_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;
@@ -429,12 +429,12 @@ void Character::changenow_arrow()                                               
         }
         else if(dynamic_cast<Ice_Arrow*>(now_arrow))
         {
-            dynamic_cast<Arrow*>(now_arrow);
+            (void)dynamic_cast<Arrow*>(now_arrow);
             for(int i=0;i<20;i++)
             {
                 if(dynamic_cast<Flame_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;
@@ -445,7 +445,7 @@ void Character::changenow_arrow()                                               
             {
                 if(dynamic_cast<Elec_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;
@@ -454,12 +454,12 @@ void Character::changenow_arrow()                                               
         }
         else if(dynamic_cast<Flame_Arrow*>(now_arrow))
         {
-            dynamic_cast<Arrow*>(now_arrow);
+            (void)dynamic_cast<Arrow*>(now_arrow);
             for(int i=0;i<20;i++)
             {
                 if(dynamic_cast<Elec_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;
@@ -469,7 +469,7 @@ void Character::changenow_arrow()                                               
             {
                 if(dynamic_cast<Ice_Arrow*>(repos[i]))
                 {
-                    dynamic_cast<Arrow*>(repos[i]);
+                    (void)dynamic_cast<Arrow*>(repos[i]);
                     now_arrow=repos[i];
                     nameofnow_arrow=now_arrow->name;
                     break;

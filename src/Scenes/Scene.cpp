@@ -70,7 +70,8 @@ void Scene::deletefallthing()
 
 void Scene::fallthing(int x,int num)
 {
-
+    Q_UNUSED(x);
+    Q_UNUSED(num);
 }
 
 void Scene::handleCheatLine()
@@ -110,7 +111,7 @@ void Scene::isgameover()
 
 void Scene::gameover(QString text)
 {
-
+    Q_UNUSED(text);
 }
 
 void Scene::changearrow()

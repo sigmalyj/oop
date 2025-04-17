@@ -101,6 +101,8 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
 
 }
 
+
+
 void BattleScene::processInput()
 {
     if(!character->ice_attacked)
@@ -1867,7 +1869,7 @@ void BattleScene::attackanimation()                                     //判断
                                 hero->now_weapon->flameItem->setVisible(true);
                                 hero->now_weapon->flame_attacked=true;
                             }
-                            dynamic_cast<Item*>(hero->now_weapon);
+                            (void)dynamic_cast<Item*>(hero->now_weapon);
                         }
                         else
                         {
@@ -1878,7 +1880,7 @@ void BattleScene::attackanimation()                                     //判断
                                     hero->now_weapon->flameItem->setVisible(true);
                                     hero->now_weapon->flame_attacked=true;
                                 }
-                                dynamic_cast<Item*>(hero->now_weapon);
+                                (void)dynamic_cast<Item*>(hero->now_weapon);
                             }
                         }
 
@@ -1948,7 +1950,7 @@ void BattleScene::attackanimation()                                     //判断
                                 castthing->setPos(hero->pos().x(),hero->pos().y()-80);
                                 hero->charactercast();
                             }
-                            dynamic_cast<Item*>(hero->now_weapon);
+                            (void)dynamic_cast<Item*>(hero->now_weapon);
                         }
                         else
                         {
@@ -1960,7 +1962,7 @@ void BattleScene::attackanimation()                                     //判断
                                     castthing->setPos(hero->pos().x(),hero->pos().y()-80);
                                     hero->characterdropbow();
                                 }
-                                dynamic_cast<Item*>(hero->now_weapon);
+                                (void)dynamic_cast<Item*>(hero->now_weapon);
                             }
                         }
 
@@ -1982,7 +1984,7 @@ void BattleScene::attackanimation()                                     //判断
             }
 
         }
-        dynamic_cast<Item*>(item);
+        (void)dynamic_cast<Item*>(item);
 
 
    }
@@ -2018,7 +2020,7 @@ void BattleScene::burnt()
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(character->pos().x()>1000&&character->pos().y()>200&&character->pos().y()<340)                   //人在着火平台旁会持续受到伤害
@@ -2058,7 +2060,7 @@ void BattleScene::burnt()
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(abs(character->pos().x()-character_2->pos().x())<100&&abs(character->pos().y()-character_2->pos().y())<100)
@@ -2095,7 +2097,7 @@ void BattleScene::burnt()
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(abs(character->pos().x()-character_2->pos().x())<150&&abs(character->pos().y()-character_2->pos().y())<150)
@@ -2135,7 +2137,7 @@ void BattleScene::elecspread()                                          //金属
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(character->pos().x()>240&&character->pos().x()<450&&character->pos().y()>200&&character->pos().y()<340)          //人物在导电平台附近会受到电击
@@ -2175,7 +2177,7 @@ void BattleScene::elecspread()                                          //金属
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(abs(character->pos().x()-character_2->pos().x())<100&&abs(character->pos().y()-character_2->pos().y())<100)
@@ -2212,7 +2214,7 @@ void BattleScene::elecspread()                                          //金属
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item*>(item);
 
         }
         if(abs(character->pos().x()-character_2->pos().x())<150&&abs(character->pos().y()-character_2->pos().y())<150)

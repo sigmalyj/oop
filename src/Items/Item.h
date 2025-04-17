@@ -19,7 +19,9 @@ public:
     //由子类决定具体画什么样子
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override {
-
+        Q_UNUSED(painter);
+        Q_UNUSED(option);
+        Q_UNUSED(widget);
     }
 
     QPointF fall_v;
