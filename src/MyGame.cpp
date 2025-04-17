@@ -15,3 +15,4 @@ MyGame::MyGame(QWidget *parent) : QMainWindow(parent)
 }
 
 // first change wty
+// second change wty
