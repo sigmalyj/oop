@@ -364,7 +364,7 @@ void BattleScene::processPicking()
         }
     }
 }
-
+// test wty 1
 void BattleScene::HeroInPut(Character *character)                        //人物移动与拾取
 {
 
