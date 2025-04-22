@@ -23,6 +23,8 @@ public:
     }
 
     QPointF fall_v;
+    QPointF speed;                //物体的速度
+    QPointF acceleration;          //物体的加速度
     QGraphicsPixmapItem *flameItem{};       //燃烧效果
     QGraphicsPixmapItem *iceItem{};         //冰冻效果
     QGraphicsPixmapItem *elecItem{};        //触电效果

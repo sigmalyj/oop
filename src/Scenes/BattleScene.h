@@ -56,6 +56,10 @@ public:
     void burnt () override;                     //木制平台燃烧导致周围木制武器被点燃
 
     void elecspread() override;                 //金属平台触电时传到至周围金属物品和人物
+
+    bool Collision_detection(Item* a,Item* b) ;         //碰撞检测
+
+    void newgravity(Item* item);              //物品下落函数
 protected slots:
 
     void update() override;                     //游戏主循环
@@ -81,13 +85,14 @@ private:
     PlatForm *iceplat;
     PlatForm *fireplat;
     PlatForm *rockplat;
-    QVector<Item*>totalfallthing;           //两个记录已投掷武器的数组、两个记录已发射的箭的数组、一个记录凋落物的数组
+    QVector<Item*>total_random_fallthing;           //两个记录已投掷武器的数组、两个记录已发射的箭的数组、一个记录凋落物的数组
     QVector<Sword *>totalcasting;
     QVector<Sword*>totalcasting_2;
     QVector<Arrow*>totalshooted;
     QVector<Arrow*>totalshooted_2;
     CheatLine *lineEdit;
     QDialog dialog;
+    Character* characters[2];               //两个角色
 
 };
 

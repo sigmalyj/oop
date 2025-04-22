@@ -38,6 +38,9 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     map = new Battlefield();
     character = new Link();
     character_2=new Link();
+
+    characters[0]=character;
+    characters[1]=character_2;
     iceplat=new IcePlat();
     iceplat->setPos(270,300);
     fireplat=new FirePlat();
@@ -53,6 +56,7 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     map->scaleToFitScene(this);
     character->setPos(map->getSpawnPos());
     character_2->setPos(map->getSpawnPos().x()+100,map->getSpawnPos().y());
+
 
     QProgressBar *progressBar = new QProgressBar();                                     //添加血条
     progressBar->setRange(0, 200);
@@ -101,7 +105,7 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
 
 }
 
-void BattleScene::processInput()
+void BattleScene::processInput()                                                        //人物被冰冻时不能接受输入
 {
     if(!character->ice_attacked)
     {
@@ -300,7 +304,7 @@ void BattleScene::keyReleaseEvent(QKeyEvent *event)
     }
 }
 
-void BattleScene::update()
+void BattleScene::update()                                              //主循环
 {
     Scene::update();
 }
@@ -314,7 +318,7 @@ void BattleScene::processMovement()                                     //更新
     if (character_2 != nullptr) {
         character_2->setPos(character_2->pos() + character_2->getVelocity() * (double) deltaTime);
     }
-    for(Item *item:totalfallthing)                                      //掉落物
+    for(Item *item:total_random_fallthing)                                      //掉落物
     {
         item->setPos(item->pos()+item->fall_v*deltaTime);
     }
@@ -340,35 +344,22 @@ void BattleScene::processMovement()                                     //更新
 void BattleScene::processPicking()
 {
     Scene::processPicking();
-    if (character->isPicking())
-    {
-        auto mountable = findNearestUnmountedMountable(character->pos(), 100);
-        if (mountable != nullptr)
-        {
 
-            if(auto newarror=dynamic_cast<Arrow*>(mountable))           //捡起箭头与捡起其他装备分开，因为箭头可以储备，其他装备设定为捡起新的换下旧的
-            {
-                character->pickupArrow(newarror);
-            }
-             else
-            {
-                mountable=pickupMountable(character,mountable);
-            }
-        }
-    }
-    if (character_2->isPicking())
+    for (Character* chara : characters)
     {
-        auto mountable = findNearestUnmountedMountable(character_2->pos(), 100);
-        if (mountable != nullptr)
+        if (chara->isPicking())
         {
-
-            if(auto newarror=dynamic_cast<Arrow*>(mountable))
+            auto mountable = findNearestUnmountedMountable(chara->pos(), 100);
+            if (mountable != nullptr)
             {
-                character_2->pickupArrow(newarror);
-            }
-            else
-            {
-                mountable=pickupMountable(character_2,mountable);
+                if (auto newArrow = dynamic_cast<Arrow*>(mountable)) // 捡起箭头
+                {
+                    chara->pickupArrow(newArrow);
+                }
+                else // 捡起其他装备
+                {
+                    mountable = pickupMountable(chara, mountable);
+                }
             }
         }
     }
@@ -587,7 +578,7 @@ void BattleScene::fall()                                                 //掉�
 
 void BattleScene::handlefallthing()                                      //更新掉落物速度
 {
-    for (Item *item:totalfallthing)
+    for (Item *item:total_random_fallthing)
     {
         gravity(item);
 
@@ -604,7 +595,7 @@ void BattleScene::deletefallthing()                                      //生�
         return ;
     }
 
-    for(Item* item:totalfallthing)
+    for(Item* item:total_random_fallthing)
     {
 
         if(item->pos().x()!=-200&&item->pos().y()!=-200)
@@ -632,7 +623,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         elecbreakerarmor->fall_v.setY(0);
         elecbreakerarmor->fall_v.setX(0);
         addItem(elecbreakerarmor);
-        totalfallthing.push_back(elecbreakerarmor);
+        total_random_fallthing.push_back(elecbreakerarmor);
         break;
     }
     case 2:
@@ -644,7 +635,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         flamebreakerarmor->fall_v.setX(0);
         flamebreakerarmor->fall_v.setY(0);
         addItem(flamebreakerarmor);
-        totalfallthing.push_back(flamebreakerarmor);
+        total_random_fallthing.push_back(flamebreakerarmor);
         break;
     }
     case 3:
@@ -656,7 +647,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         icebreakerarmor->fall_v.setX(0);
         icebreakerarmor->fall_v.setY(0);
         addItem(icebreakerarmor);
-        totalfallthing.push_back(icebreakerarmor);
+        total_random_fallthing.push_back(icebreakerarmor);
         break;
     }
     case 4:
@@ -668,7 +659,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         flamebreakerhead->fall_v.setX(0);
         flamebreakerhead->fall_v.setY(0);
         addItem(flamebreakerhead);
-        totalfallthing.push_back(flamebreakerhead);
+        total_random_fallthing.push_back(flamebreakerhead);
         break;
     }
     case 5:
@@ -680,7 +671,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         elecbreakerhead->fall_v.setX(0);
         elecbreakerhead->fall_v.setY(0);
         addItem(elecbreakerhead);
-        totalfallthing.push_back(elecbreakerhead);
+        total_random_fallthing.push_back(elecbreakerhead);
         break;
     }
     case 6:
@@ -692,7 +683,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         icebreakerhead->fall_v.setX(0);
         icebreakerhead->fall_v.setY(0);
         addItem(icebreakerhead);
-        totalfallthing.push_back(icebreakerhead);
+        total_random_fallthing.push_back(icebreakerhead);
         break;
     }
     case 7:
@@ -704,7 +695,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         flamebreaketrou->fall_v.setX(0);
         flamebreaketrou->fall_v.setY(0);
         addItem(flamebreaketrou);
-        totalfallthing.push_back(flamebreaketrou);
+        total_random_fallthing.push_back(flamebreaketrou);
         break;
     }
     case 8:
@@ -716,7 +707,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         icebreaketrou->fall_v.setX(0);
         icebreaketrou->fall_v.setY(0);
         addItem(icebreaketrou);
-        totalfallthing.push_back(icebreaketrou);
+        total_random_fallthing.push_back(icebreaketrou);
         break;
     }
     case 9:
@@ -728,7 +719,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         elecbreaketrou->fall_v.setX(0);
         elecbreaketrou->fall_v.setY(0);
         addItem(elecbreaketrou);
-        totalfallthing.push_back(elecbreaketrou);
+        total_random_fallthing.push_back(elecbreaketrou);
         break;
     }
     case 10:
@@ -740,7 +731,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         doubleicemetal->fall_v.setX(0);
         doubleicemetal->fall_v.setY(0);
         addItem(doubleicemetal);
-        totalfallthing.push_back(doubleicemetal);
+        total_random_fallthing.push_back(doubleicemetal);
         break;
     }
     case 11:
@@ -752,7 +743,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         longelecmetal->fall_v.setX(0);
         longelecmetal->fall_v.setY(0);
         addItem(longelecmetal);
-        totalfallthing.push_back(longelecmetal);
+        total_random_fallthing.push_back(longelecmetal);
         break;
     }
     case 12:
@@ -764,7 +755,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         shortflamewooden->fall_v.setX(0);
         shortflamewooden->fall_v.setY(0);
         addItem(shortflamewooden);
-        totalfallthing.push_back(shortflamewooden);
+        total_random_fallthing.push_back(shortflamewooden);
         break;
     }
     case 13:
@@ -776,7 +767,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         longicemetal->fall_v.setX(0);
         longicemetal->fall_v.setY(0);
         addItem(longicemetal);
-        totalfallthing.push_back(longicemetal);
+        total_random_fallthing.push_back(longicemetal);
         break;
     }
     case 14:
@@ -788,7 +779,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         middleelecmetal->fall_v.setX(0);
         middleelecmetal->fall_v.setY(0);
         addItem(middleelecmetal);
-        totalfallthing.push_back(middleelecmetal);
+        total_random_fallthing.push_back(middleelecmetal);
         break;
     }
     case 15:
@@ -800,7 +791,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         shortflamewooden->fall_v.setX(0);
         shortflamewooden->fall_v.setY(0);
         addItem(shortflamewooden);
-        totalfallthing.push_back(shortflamewooden);
+        total_random_fallthing.push_back(shortflamewooden);
         break;
     }
     case 16:
@@ -812,7 +803,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         elecarrow->fall_v.setX(0);
         elecarrow->fall_v.setY(0);
         addItem(elecarrow);
-        totalfallthing.push_back(elecarrow);
+        total_random_fallthing.push_back(elecarrow);
         break;
     }
     case 17:
@@ -824,7 +815,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         icearrow->fall_v.setX(0);
         icearrow->fall_v.setY(0);
         addItem(icearrow);
-        totalfallthing.push_back(icearrow);
+        total_random_fallthing.push_back(icearrow);
         break;
     }
     case 18:
@@ -836,7 +827,7 @@ void BattleScene::fallthing(int x,int num)                               //生�
         flamearrow->fall_v.setX(0);
         flamearrow->fall_v.setY(0);
         addItem(flamearrow);
-        totalfallthing.push_back(flamearrow);
+        total_random_fallthing.push_back(flamearrow);
         break;
     }
     default:
@@ -856,42 +847,31 @@ void BattleScene::handleCheatLine()                                      //设�
     fallthing(x,num);
 }
 
-void BattleScene::attack()                                               //近战武器攻击
+void BattleScene::attack()
 {
-    static int num=0;num++;
-    if(num<30)
+    static int num = 0;
+    num++;
+    if (num < 30)
     {
         return;
     }
+    num = 0;
 
-    num=0;
-    if(!character->ice_attacked)                                        //没有被冰冻，可以进行攻击
+    
+    Character* opponents[] = {character_2, character};
+
+    for (int i = 0; i < 2; ++i)
     {
-        if(character->isAttackDown())
+        if (!characters[i]->ice_attacked && characters[i]->isAttackDown())
         {
-            character->characterattack(character_2);
-            if(character_2->lifevalue<0)
+            characters[i]->characterattack(opponents[i]);
+            if (opponents[i]->lifevalue < 0)
             {
-                character_2->bloodbar->setValue(0);
+                opponents[i]->bloodbar->setValue(0);
             }
             else
             {
-                character_2->bloodbar->setValue(character_2->lifevalue);
-            }
-        }
-    }
-    if(!character_2->ice_attacked)
-    {
-        if(character_2->isAttackDown())
-        {
-            character_2->characterattack(character);
-            if(character->lifevalue<0)
-            {
-                character->bloodbar->setValue(0);
-            }
-            else
-            {
-                character->bloodbar->setValue(character->lifevalue);
+                opponents[i]->bloodbar->setValue(opponents[i]->lifevalue);
             }
         }
     }
@@ -902,192 +882,72 @@ void BattleScene::attack()                                               //近�
 
 void BattleScene::changeweapon()
 {
-    if(character->ischangeweaponDown()&&!character->ice_attacked)
+    for (Character* chara : characters)
     {
-        character->changeWeapon();
-    }
-    if(character_2->ischangeweaponDown()&&!character_2->ice_attacked)
-    {
-        character_2->changeWeapon();
+        if (chara->ischangeweaponDown() && !chara->ice_attacked)
+        {
+            chara->changeWeapon();
+        }
     }
 }
 
-void BattleScene::cast()                                                 //投掷近战武器和射箭，设置初速度
+void BattleScene::cast()
 {
-    static int num=0;                                                   //设置有效投掷间隔
+    static int num = 0; // 设置有效投掷间隔
     num++;
-    if(num<50)
+    if (num < 50)
     {
         return;
     }
-    num=0;
-    if(!character->ice_attacked)                                        //被冰冻不能进行任何操作
-    {
-        if(character->isCastDown()&&character->now_weapon!=NULL)
-        {
-            if(character->now_weapon==character->sword)                 //当前使用近战武器
-            {
-                static Sword* castthing=NULL;
-                castthing=character->getsword();
-                if(castthing!=NULL)
-                {
-                    castthing->setPos(character->pos().x(),character->pos().y()-130);
-                    if(character->isFace())
-                    {
-                        castthing->fall_v.setX(0.6);                    //投掷初速度
-                    }
-                    else
-                    {
-                        castthing->fall_v.setX(-0.6);
-                    }
-                    totalcasting.push_back(castthing);                  //加入投掷物数组，用于计算速度，更新坐标
+    num = 0;
 
-                    character->charactercast();
+    Character* characters[] = {character, character_2};
+    QVector<Sword*>* totalCasting[] = {&totalcasting, &totalcasting_2}; // 使用指针数组指向 totalcasting 和 totalcasting_2
+
+    for (int i = 0; i < 2; ++i)
+    {
+        Character* chara = characters[i];
+        if (!chara->ice_attacked && chara->isCastDown() && chara->now_weapon != nullptr)
+        {
+            if (chara->now_weapon == chara->sword) // 当前使用近战武器
+            {
+                Sword* castthing = chara->getsword();
+                if (castthing != nullptr)
+                {
+                    castthing->setPos(chara->pos().x(), chara->pos().y() - 130);
+                    castthing->fall_v.setX(chara->isFace() ? 0.6 : -0.6); // 投掷初速度
+                    totalCasting[i]->push_back(castthing); // 加入对应的投掷物数组
+                    chara->charactercast();
                 }
             }
-            else                                                        //当前使用武器为弓箭，处理箭头，因为是同一个按键操作，所有将投掷的近战武器和箭放在cast函数中
+            else // 当前使用武器为弓箭
             {
-                character->setattackstate(true);
-                int num=character->bow->arrownum;
-                int distance=character->bow->attackdistance;
-                static Arrow * shootedarrow=NULL;
-                for(int i=0;i<num;i++)
+                chara->setattackstate(true);
+                int arrowCount = chara->bow->arrownum;
+                int distance = chara->bow->attackdistance;
+                for (int j = 0; j < arrowCount; j++)
                 {
-                    shootedarrow=character->getshootedarrow();
-                    if(shootedarrow!=NULL)
+                    Arrow* shootedarrow = chara->getshootedarrow();
+                    if (shootedarrow != nullptr)
                     {
-                        shootedarrow->setPos(character->pos().x(),character->pos().y()-100);
-                        if(character->isFace())                         //确定人物朝向
+                        shootedarrow->setPos(chara->pos().x(), chara->pos().y() - 100);
+                        if (chara->isFace()) // 确定人物朝向
                         {
-                            if(distance==900)                           //根据不同弓的射程确定不同的初速度
-                            {
-                                shootedarrow->fall_v.setX(3);
-                                shootedarrow->setRotation(45);
-                            }
-                            if(distance==650)
-                            {
-                                shootedarrow->fall_v.setX(2.4);
-                                shootedarrow->setRotation(45);
-                            }
-                            if(distance==400)
-                            {
-                                shootedarrow->fall_v.setX(1.8);
-                                shootedarrow->setRotation(45);
-                            }
+                            shootedarrow->fall_v.setX(distance == 900 ? 3 : (distance == 650 ? 2.4 : 1.8));
+                            shootedarrow->setRotation(45);
                         }
                         else
                         {
-                            if(distance==900)
-                            {
-                                shootedarrow->fall_v.setX(-3);
-                                shootedarrow->setRotation(225);
-                            }
-                            if(distance==650)
-                            {
-                                shootedarrow->fall_v.setX(-2.4);
-                                shootedarrow->setRotation(225);
-                            }
-                            if(distance==400)
-                            {
-                                shootedarrow->fall_v.setX(-1.8);
-                                shootedarrow->setRotation(225);
-                            }
-                        }
-                        for(int i=0;i<10000000;i++)
-                        {
-                            ;
+                            shootedarrow->fall_v.setX(distance == 900 ? -3 : (distance == 650 ? -2.4 : -1.8));
+                            shootedarrow->setRotation(225);
                         }
                         totalshooted.push_back(shootedarrow);
-                        character->shootarrow();
+                        chara->shootarrow();
                     }
                 }
             }
         }
     }
-    if(!character_2->ice_attacked)                                                      //人物二同理
-    {
-        if(character_2->isCastDown()&&character_2->now_weapon!=NULL)
-        {
-            if(character_2->now_weapon==character_2->sword)
-            {
-                character_2->setattackstate(true);
-                static Sword* castthing=NULL;
-                castthing=character_2->getsword();
-                if(castthing!=NULL)
-                {
-                    castthing->setPos(character_2->pos().x(),character_2->pos().y()-130);
-                    if(character_2->isFace())
-                    {
-                        castthing->fall_v.setX(0.6);
-                    }
-                    else
-                    {
-                        castthing->fall_v.setX(-0.6);
-                    }
-                    totalcasting_2.push_back(castthing);
-
-                    character_2->charactercast();
-                }
-            }
-            else
-            {
-                int num=character_2->bow->arrownum;
-                int distance=character_2->bow->attackdistance;
-                static Arrow * shootedarrow=NULL;
-                for(int i=0;i<num;i++)
-                {
-                    shootedarrow=character_2->getshootedarrow();
-                    if(shootedarrow!=NULL)
-                    {
-                        shootedarrow->setPos(character_2->pos().x(),character_2->pos().y()-100);
-                        if(character_2->isFace())
-                        {
-                            if(distance==900)
-                            {
-                                shootedarrow->fall_v.setX(3);
-                                shootedarrow->setRotation(45);
-                            }
-                            if(distance==650)
-                            {
-                                shootedarrow->fall_v.setX(2.4);
-                                shootedarrow->setRotation(45);
-                            }
-                            if(distance==400)
-                            {
-                                shootedarrow->fall_v.setX(1.8);
-                                shootedarrow->setRotation(45);
-                            }
-                        }
-                        else
-                        {
-                            if(distance==900)
-                            {
-                                shootedarrow->fall_v.setX(-3);
-                                shootedarrow->setRotation(225);
-                            }
-                            if(distance==650)
-                            {
-                                shootedarrow->fall_v.setX(-2.4);
-                                shootedarrow->setRotation(225);
-                            }
-                            if(distance==400)
-                            {
-                                shootedarrow->fall_v.setX(-1.8);
-                                shootedarrow->setRotation(225);
-                            }
-                        }
-                        for(int i=0;i<10000000;i++)
-                        {
-                            ;
-                        }
-                        totalshooted_2.push_back(shootedarrow);
-                        character_2->shootarrow();
-                    }
-                }
-            }
-        }
-    }
-
 }
 
 void BattleScene::gravity(Item *item)                                    //重力的实现
@@ -1153,15 +1013,15 @@ void BattleScene::gravity(Item *item)                                    //重�
                 item->fall_v.setY(0);
                 item->setPos(x,120);
             }
-             if(y>170)
+            if(y>170)
             {
                 item->fall_v.setY(item->fall_v.y()+0.015);
-                 if(y>map->getFloorHeight())
+                if(y>map->getFloorHeight())
                 {
                     item->setPos(-120,-120);
                     item->fall_v.setX(0);
                     item->fall_v.setY(0);
-                 }
+                }
             }
 
         }
@@ -1217,7 +1077,6 @@ void BattleScene::gravity(Item *item)                                    //重�
     }
 
 }
-
 void BattleScene::handlecastthing()
 {
     for(Sword* item:totalcasting)                                               //人物一所投掷的近战武器，位置更新和伤害判定
@@ -1702,15 +1561,16 @@ void BattleScene::handlecastthing()
 
 void BattleScene::isgameover()                                          //判断游戏是否结束（一方生命值小于0，判断另一方获胜）
 {
-    if(character->lifevalue<0)
+    QString messages[] = {"玩家二胜利", "玩家一胜利"};
+
+    for (int i = 0; i < 2; ++i)
     {
-        character->bloodbar->setValue(0);
-        gameover("玩家二胜利");
-    }
-    if(character_2->lifevalue<0)
-    {
-        character_2->bloodbar->setValue(0);
-        gameover("玩家一胜利");
+        if (characters[i]->lifevalue < 0)
+        {
+            characters[i]->bloodbar->setValue(0);
+            gameover(messages[i]);
+            return; // 游戏结束，退出函数
+        }
     }
 
 }
@@ -1994,7 +1854,7 @@ void BattleScene::burnt()
 {
     if(fireplat->flame_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2034,7 +1894,7 @@ void BattleScene::burnt()
     }
     if(character->flame_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2071,7 +1931,7 @@ void BattleScene::burnt()
 
     if(character_2->flame_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2111,7 +1971,7 @@ void BattleScene::elecspread()                                          //金属
 {
     if(iceplat->elec_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2151,7 +2011,7 @@ void BattleScene::elecspread()                                          //金属
     }
     if(character->elec_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2188,7 +2048,7 @@ void BattleScene::elecspread()                                          //金属
 
     if(character_2->elec_attacked)
     {
-        for(Item* item:totalfallthing)
+        for(Item* item:total_random_fallthing)
         {
             if(auto sword=dynamic_cast<Sword*>(item))
             {
@@ -2224,6 +2084,33 @@ void BattleScene::elecspread()                                          //金属
     }
 
 }
+
+bool BattleScene::Collision_detection(Item *a, Item *b)
+{
+    QRectF A=a->boundingRect();
+    QRectF B=b->boundingRect();
+    if(a->pos().x()+A.width()>=b->pos().x()&&a->pos().x()<=b->pos().x()+B.width()&&
+            a->pos().y()+A.height()>=b->pos().y()&&a->pos().y()<=b->pos().y()+B.height())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
+}
+
+void BattleScene::newgravity(Item *item)
+{
+    //实现一个物体按重力下落
+    int x=item->pos().x();
+    int y=item->pos().y();
+
+
+}
+
+
 
 Mountable *BattleScene::findNearestUnmountedMountable(const QPointF &pos, qreal distance_threshold)
 {
