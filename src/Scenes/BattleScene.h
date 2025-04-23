@@ -41,7 +41,7 @@ public:
 
     void cast() override;                       //投掷近战武器和射箭，设置初速度
 
-    void gravity(Item *) override;              //游戏重力引擎，处理需要下落的物品
+    void gravity(Item *, qreal g=0.015) override;              //游戏重力引擎，处理需要下落的物品
 
     void handlecastthing()override;             //处理投掷物，计算伤害值，确定受击状态
 
@@ -56,6 +56,19 @@ public:
     void burnt () override;                     //木制平台燃烧导致周围木制武器被点燃
 
     void elecspread() override;                 //金属平台触电时传到至周围金属物品和人物
+
+    bool Collision_detection(Item* a,Item* b) ;         //碰撞检测
+
+    bool Collision_detection(Item* a,QRectF b);         //碰撞检测
+
+    bool stop_detection(Item* item, Item *rect, QString text);         //碰撞检测
+
+    bool handlecastweapon(Sword* item,Character *attacker,Character* opponent); //处理投掷物碰撞
+    bool handleshootarrowattack(Arrow* item,Character *attacker,Character* opponent); //处理射出的箭碰撞
+
+    void newgravity(Item* item);              //物品下落函数
+
+    void processPlayerInput(Character* character);   //处理人物输入
 protected slots:
 
     void update() override;                     //游戏主循环
@@ -81,13 +94,15 @@ private:
     PlatForm *iceplat;
     PlatForm *fireplat;
     PlatForm *rockplat;
-    QVector<Item*>totalfallthing;           //两个记录已投掷武器的数组、两个记录已发射的箭的数组、一个记录凋落物的数组
+    QVector<Item*>total_random_fallthing;           //两个记录已投掷武器的数组、两个记录已发射的箭的数组、一个记录凋落物的数组
     QVector<Sword *>totalcasting;
     QVector<Sword*>totalcasting_2;
     QVector<Arrow*>totalshooted;
     QVector<Arrow*>totalshooted_2;
     CheatLine *lineEdit;
     QDialog dialog;
+    Character* characters[2];               //两个角色
+    PlatForm* platforms[3];                //三个平台
 
 };
 

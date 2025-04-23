@@ -59,6 +59,11 @@ public:
 
     void setchangearrowDown(bool changearrowdown);
 
+    bool isonground() const;                                     //是否在地面上
+    void setonground(bool onground);                               //设置是否在地面上
+
+
+
     [[nodiscard]] const QPointF &getVelocity() const;
 
     [[nodiscard]] bool isPicking() const
@@ -125,6 +130,7 @@ protected:
     LegEquipment *legEquipment{};
     Armor *armor{};
     QPointF velocity{};
+    QPointF acceleration{};
     Arrow *now_arrow{};                     //当前使用箭头
     Arrow * repos[20];
     int attackvalue=0;
@@ -143,6 +149,7 @@ private:
     bool castDown{};
     bool changearrow{};
     bool attackstate{};
+    bool onground=true;
 };
 
 

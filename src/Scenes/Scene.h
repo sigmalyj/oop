@@ -34,7 +34,7 @@ public:
 
     virtual void cast();
 
-    virtual void gravity(Item *);
+    virtual void gravity(Item *,qreal g=0.015);
 
     virtual void handlecastthing();
 

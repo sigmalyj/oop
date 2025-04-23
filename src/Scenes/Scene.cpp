@@ -94,7 +94,7 @@ void Scene::cast()
 
 }
 
-void Scene::gravity(Item *)
+void Scene::gravity(Item *, qreal g)
 {
 
 }
