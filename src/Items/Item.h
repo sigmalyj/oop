@@ -21,9 +21,11 @@ public:
                QWidget *widget) override {
 
     }
+    bool setonground(bool isonground);
+    void setfall_v(QPointF fallv);
 
     QPointF fall_v;
-    QPointF speed;                //物体的速度
+    QPointF x_speed;                //物体的速度
     QPointF acceleration;          //物体的加速度
     QGraphicsPixmapItem *flameItem{};       //燃烧效果
     QGraphicsPixmapItem *iceItem{};         //冰冻效果
@@ -31,6 +33,7 @@ public:
     bool flame_attacked{};                  //触电、燃烧、冰冻状态
     bool ice_attacked{};
     bool elec_attacked{};
+    bool isonground{};               //是否在地面上
 
 protected:
     QGraphicsPixmapItem *pixmapItem{};      //贴图

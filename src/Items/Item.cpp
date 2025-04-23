@@ -23,3 +23,14 @@ Item::Item(QGraphicsItem *parent, const QString &pixmapPath) : QGraphicsItem(par
     elecItem->setZValue(5);
     elecItem->setPos(-90,-200);
 }
+
+bool Item::setonground(bool isonground)
+{
+    Item::isonground = isonground;
+    return isonground;
+}
+
+void Item::setfall_v(QPointF fallv)
+{
+    fall_v=fallv;
+}

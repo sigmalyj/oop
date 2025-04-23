@@ -5,6 +5,9 @@ class PlatForm:public Item
 {
 public:
    explicit PlatForm(QGraphicsItem *parent, const QString &pixmapPath);
+    bool exists() const; //判断物品是否存在
+   bool exist=true;
+    void setexist(bool exist); //设置物品是否存在
 };
 
 #endif // PLATFORM_H

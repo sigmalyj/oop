@@ -41,7 +41,7 @@ public:
 
     void cast() override;                       //投掷近战武器和射箭，设置初速度
 
-    void gravity(Item *) override;              //游戏重力引擎，处理需要下落的物品
+    void gravity(Item *, qreal g=0.015) override;              //游戏重力引擎，处理需要下落的物品
 
     void handlecastthing()override;             //处理投掷物，计算伤害值，确定受击状态
 
@@ -59,7 +59,16 @@ public:
 
     bool Collision_detection(Item* a,Item* b) ;         //碰撞检测
 
+    bool Collision_detection(Item* a,QRectF b);         //碰撞检测
+
+    bool stop_detection(Item* item, Item *rect, QString text);         //碰撞检测
+
+    bool handlecastweapon(Sword* item,Character *attacker,Character* opponent); //处理投掷物碰撞
+    bool handleshootarrowattack(Arrow* item,Character *attacker,Character* opponent); //处理射出的箭碰撞
+
     void newgravity(Item* item);              //物品下落函数
+
+    void processPlayerInput(Character* character);   //处理人物输入
 protected slots:
 
     void update() override;                     //游戏主循环
@@ -93,6 +102,7 @@ private:
     CheatLine *lineEdit;
     QDialog dialog;
     Character* characters[2];               //两个角色
+    PlatForm* platforms[3];                //三个平台
 
 };
 

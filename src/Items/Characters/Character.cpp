@@ -119,6 +119,16 @@ void Character::setchangearrowDown(bool changearrowdown)
     changearrow=changearrowdown;
 }
 
+bool Character::isonground() const
+{
+    return onground;
+}
+void Character::setonground(bool onground)
+{
+    Character::onground = onground;
+}
+
+
 const QPointF &Character::getVelocity() const {
     return velocity;
 }
