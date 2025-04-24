@@ -115,6 +115,10 @@ public:
 
     void visualize(QGraphicsScene *scene);                          // 添加可视化方法
 
+    void beAttacked();                                               //被攻击，设置受击状态
+    void notBeAttacked();                                           //取消受击状态
+
+
     Item *now_weapon{};                     //当前所使用武器
     Sword* sword{};                         //所拥有的近战武器
     Bow* bow{};
@@ -124,7 +128,7 @@ public:
     int protect_flame=0;                    //各属性护甲值
     int protect_elec=0;
     int protect_ice=0;
-
+    Character *opponent{};
 
 protected:
 
@@ -138,6 +142,7 @@ protected:
     int attackvalue=0;
     QString nameofnow_weapon="No";          //当前所使用箭头、武器的名称
     QString nameofnow_arrow="No";
+                    //对方角色
 
 
 private:

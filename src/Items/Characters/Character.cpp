@@ -1,4 +1,5 @@
 #include <QTransform>
+#include <QGraphicsColorizeEffect>
 #include <QGraphicsScene>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsRectItem>
@@ -26,6 +27,47 @@ void Character::visualize(QGraphicsScene *scene) {
     boundingBox->setPen(QPen(Qt::blue));
     boundingBox->setPos(pos());
     scene->addItem(boundingBox);
+}
+
+void Character::beAttacked()
+{
+    // 创建一个 QGraphicsColorizeEffect 对象，并设置颜色为红色
+    auto createRedEffect = []()
+    {
+        QGraphicsColorizeEffect *effect = new QGraphicsColorizeEffect();
+        effect->setColor(Qt::red);
+        effect->setStrength(0.5); // 设置颜色强度
+        return effect;
+    };
+
+    // 为每个装备和武器设置红色效果
+    if(headEquipment)
+        headEquipment->setGraphicsEffect(createRedEffect());
+    if(legEquipment)
+        legEquipment->setGraphicsEffect(createRedEffect());
+    if(armor)
+        armor->setGraphicsEffect(createRedEffect());
+    if(sword)
+        sword->setGraphicsEffect(createRedEffect());
+    if(bow)
+        bow->setGraphicsEffect(createRedEffect());
+
+
+}
+void Character::notBeAttacked()
+{
+    if(headEquipment)
+        headEquipment->setGraphicsEffect(nullptr);
+    if(legEquipment)
+        legEquipment->setGraphicsEffect(nullptr);
+    if(armor)
+        armor->setGraphicsEffect(nullptr);
+    if(sword)
+        sword->setGraphicsEffect(nullptr);
+    if(bow)
+        bow->setGraphicsEffect(nullptr);
+
+
 }
 
 bool Character::isLeftDown() const

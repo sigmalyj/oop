@@ -38,7 +38,8 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     map = new Battlefield();
     character = new Link();
     character_2 = new Link();
-
+    character->opponent = character_2;
+    character_2->opponent = character;
     characters[0] = character;
     characters[1] = character_2;
     iceplat = new IcePlat();
@@ -1121,57 +1122,28 @@ void BattleScene::changearrow()
 
 void BattleScene::attackanimation()                                     //判断场上物品的受击状态，显示其受击效果（燃烧，触电，冰冻），以及人物攻击动画
 {
-
-    for (Character *character : characters)
+    for(Character *character:characters)
     {
-        if (character->isattack())                                                       //人物的攻击动画
+        if(character->isattack()&&character->now_weapon!=NULL)
         {
-            if (character->now_weapon != NULL)
+            character->opponent->beAttacked();
+
+            static int num=0;
+            num++;
+            CharacterAttackAnimation(character);
+            if(num>15)
             {
-                bool nowface = character->isFace();
-                if (dynamic_cast<Double_Ice_Metal *>(character->now_weapon))              //双手刀实现两面攻击。用人物转身示意
+                num=0;
+                Sword* sword =character->getsword();
+                character->setattackstate(false);
+                if(sword!=nullptr)
                 {
-                    static int num = 0;
-                    character->now_weapon->setRotation(num * 9);                          //有效攻击判定
+                    sword->CompleteSwordAttack();
+                    character->opponent->notBeAttacked();
 
-                    num++;
-                    if (num == 20)
-                    {
-                        if (nowface == false)
-                        {
-                            character->setTransform(QTransform().scale(-1, 1));
-                            character->setface(true);
-
-                        }
-                        else
-                        {
-                            character->setTransform(QTransform().scale(1, 1));
-                            character->setface(false);
-
-                        }
-                    }
-                    if (num > 40)
-                    {
-                        num = 0;
-                        character->setattackstate(false);
-                    }
-
-                }
-                else                                                                    //其余武器攻击时只是旋转，不用转身
-                {
-                    static int num = 0;
-                    character->now_weapon->setRotation(num * 9);
-
-                    num++;
-                    if (num > 40)
-                    {
-                        character->setattackstate(false);
-                        num = 0;
-                    }
                 }
 
             }
-
         }
     }
 
@@ -1850,6 +1822,10 @@ bool BattleScene::handleshootarrowattack(Arrow *item, Character *character, Char
 void BattleScene::CharacterAttackAnimation(Character *character)
 {
     Sword* sword=character->getsword();
+    if(sword!=nullptr)
+    {
+        sword->SwordAttack();
+    }
 
 }
 
