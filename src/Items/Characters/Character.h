@@ -13,6 +13,7 @@
 #include"../Arrow/elec_arrow.h"
 #include"../Arrow/flame_arrow.h"
 #include"../Arrow/ice_arrow.h"
+#include <QGraphicsScene>
 
 class Character : public Item
 {
@@ -112,6 +113,7 @@ public:
 
     void setattackstate(bool state);                                //攻击状态（是否正在攻击），用以设置攻击间隔
 
+    void visualize(QGraphicsScene *scene);                          // 添加可视化方法
 
     Item *now_weapon{};                     //当前所使用武器
     Sword* sword{};                         //所拥有的近战武器

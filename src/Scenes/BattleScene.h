@@ -69,6 +69,8 @@ public:
     void newgravity(Item* item);              //物品下落函数
 
     void processPlayerInput(Character* character);   //处理人物输入
+
+    void CharacterAttackAnimation(Character* character); //人物攻击函数
 protected slots:
 
     void update() override;                     //游戏主循环

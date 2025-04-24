@@ -37,31 +37,34 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     srand((unsigned int)time(NULL));                                    //添加随机数种子
     map = new Battlefield();
     character = new Link();
-    character_2=new Link();
+    character_2 = new Link();
 
-    characters[0]=character;
-    characters[1]=character_2;
-    iceplat=new IcePlat();
-    iceplat->setPos(270,300);
-    fireplat=new FirePlat();
-    fireplat->setPos(1000,320);
-    rockplat=new RockPlat();
-    rockplat->setPos(560,150);
+    characters[0] = character;
+    characters[1] = character_2;
+    iceplat = new IcePlat();
+    iceplat->setPos(270, 300);
+    fireplat = new FirePlat();
+    fireplat->setPos(1000, 320);
+    rockplat = new RockPlat();
+    rockplat->setPos(560, 150);
 
-    platforms[0]=iceplat;
-    platforms[1]=fireplat;
-    platforms[2]=rockplat;
+    platforms[0] = iceplat;
+    platforms[1] = fireplat;
+    platforms[2] = rockplat;
 
     addItem(map);
     addItem(character);
+    addItem(character_2);
     addItem(iceplat);
     addItem(fireplat);
     addItem(rockplat);
-    addItem(character_2);
     map->scaleToFitScene(this);
     character->setPos(map->getSpawnPos());
-    character_2->setPos(map->getSpawnPos().x()+100,map->getSpawnPos().y());
+    character_2->setPos(map->getSpawnPos().x() + 100, map->getSpawnPos().y());
 
+    // 调用可视化方法
+    character->visualize(this);
+    character_2->visualize(this);
 
     QProgressBar *progressBar = new QProgressBar();                                     //添加血条
     progressBar->setRange(0, 200);
@@ -79,8 +82,8 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     addItem(proxy_2);
     proxy_2->setPos(10, 40);
 
-    character->bloodbar=progressBar;                                                    //人物存一个指向血条的指针，用新添加的血条初始化人物血条
-    character_2->bloodbar=progressBar_2;
+    character->bloodbar = progressBar;                                                    //人物存一个指向血条的指针，用新添加的血条初始化人物血条
+    character_2->bloodbar = progressBar_2;
 
     lineEdit = new CheatLine();                                                         //作弊框
     lineEdit->setPlaceholderText("作弊框");                                              // 设置占位符文本
@@ -89,24 +92,24 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     QGraphicsProxyWidget *proxy_3 = new QGraphicsProxyWidget();                         //添加作弊框
     proxy_3->setWidget(lineEdit);
     addItem(proxy_3);
-    proxy_3->setPos(1050,10 );
-    connect(lineEdit,&QLineEdit::returnPressed,this,&BattleScene::handleCheatLine);
+    proxy_3->setPos(1050, 10);
+    connect(lineEdit, &QLineEdit::returnPressed, this, &BattleScene::handleCheatLine);
     QGraphicsTextItem *textItem = new QGraphicsTextItem("状态栏");
 
-    textItem->setPos(300,10 );                                                          // 设置文本项的位置
+    textItem->setPos(300, 10);                                                          // 设置文本项的位置
     textItem->setDefaultTextColor(Qt::white);
     QFont font("Arial", 13);
     textItem->setFont(font);
     addItem(textItem);
 
     QGraphicsTextItem *textItem_2 = new QGraphicsTextItem("状态栏");
-    textItem_2->setPos(300,40 );
+    textItem_2->setPos(300, 40);
     textItem_2->setDefaultTextColor(Qt::white);
     textItem_2->setFont(font);
     addItem(textItem_2);
 
-    character->state=textItem;                                                          //人物存一个指向作弊框的指针
-    character_2->state=textItem_2;
+    character->state = textItem;                                                          //人物存一个指向作弊框的指针
+    character_2->state = textItem_2;
 
 }
 
@@ -114,11 +117,11 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
 
 void BattleScene::processInput()                                                        //人物被冰冻时不能接受输入
 {
-    if(!character->ice_attacked)
+    if (!character->ice_attacked)
     {
         HeroInPut(character);
     }
-    if(!character_2->ice_attacked)
+    if (!character_2->ice_attacked)
     {
         HeroInPut(character_2);
     }
@@ -153,27 +156,27 @@ void BattleScene::keyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_K:
-        if(character !=nullptr)
+        if (character != nullptr)
         {
             character->setJumpDown(true);
         }break;
     case Qt::Key_Space:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setAttackDown(true);
         }break;
     case Qt::Key_Q:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setchangeweaponDown(true);
         }break;
     case Qt::Key_E:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setCastDown(true);
         }break;
     case Qt::Key_R:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setchangearrowDown(true);
         }break;
@@ -194,29 +197,29 @@ void BattleScene::keyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_Up:
-        if(character_2 !=nullptr)
+        if (character_2 != nullptr)
         {
             character_2->setJumpDown(true);
         }break;
     case Qt::Key_N:
-        if(character_2!=nullptr)
+        if (character_2 != nullptr)
         {
             character_2->setAttackDown(true);
         }break;
     case Qt::Key_M:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setchangeweaponDown(true);
         }
         break;
     case Qt::Key_B:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setCastDown(true);
         }
         break;
     case Qt::Key_V:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setchangearrowDown(true);
         }
@@ -245,29 +248,29 @@ void BattleScene::keyReleaseEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_K:
-        if(character !=nullptr)
+        if (character != nullptr)
         {
             character->setJumpDown(false);
         }
         break;
     case Qt::Key_Space:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setAttackDown(false);
         }break;
     case Qt::Key_Q:
-        if(character!=nullptr)
+        if (character != nullptr)
         {
             character->setchangeweaponDown(false);
         }break;
     case Qt::Key_E:
-        if(character!=NULL)
+        if (character != NULL)
         {
             character->setCastDown(false);
         }
         break;
     case Qt::Key_R:
-        if(character!=NULL)
+        if (character != NULL)
         {
             character->setchangearrowDown(false);
         }
@@ -288,29 +291,29 @@ void BattleScene::keyReleaseEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_Up:
-        if(character_2 !=nullptr)
+        if (character_2 != nullptr)
         {
             character_2->setJumpDown(false);
         }break;
     case Qt::Key_N:
-        if(character_2!=nullptr)
+        if (character_2 != nullptr)
         {
             character_2->setAttackDown(false);
         }break;
     case Qt::Key_M:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setchangeweaponDown(false);
         }
         break;
     case Qt::Key_B:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setCastDown(false);
         }
         break;
     case Qt::Key_V:
-        if(character_2!=NULL)
+        if (character_2 != NULL)
         {
             character_2->setchangearrowDown(false);
         }
@@ -329,31 +332,31 @@ void BattleScene::processMovement()                                     //更新
 {
     Scene::processMovement();
     if (character != nullptr) {
-        character->setPos(character->pos() + character->getVelocity() * (double) deltaTime);
+        character->setPos(character->pos() + character->getVelocity() * (double)deltaTime);
     }
     if (character_2 != nullptr) {
-        character_2->setPos(character_2->pos() + character_2->getVelocity() * (double) deltaTime);
+        character_2->setPos(character_2->pos() + character_2->getVelocity() * (double)deltaTime);
     }
-    for(Item *item:total_random_fallthing)                                      //掉落物
+    for (Item *item : total_random_fallthing)                                      //掉落物
     {
-        item->setPos(item->pos()+item->fall_v*deltaTime);
+        item->setPos(item->pos() + item->fall_v * deltaTime);
     }
 
-    for(Item* item:totalcasting)                                        //投掷物
+    for (Item *item : totalcasting)                                        //投掷物
     {
-        item->setPos(item->pos()+item->fall_v*deltaTime);
+        item->setPos(item->pos() + item->fall_v * deltaTime);
     }
-    for(Item* item:totalcasting_2)
+    for (Item *item : totalcasting_2)
     {
-        item->setPos(item->pos()+item->fall_v*deltaTime);
+        item->setPos(item->pos() + item->fall_v * deltaTime);
     }
-    for(Arrow* item:totalshooted)                                       //射出的弓箭
+    for (Arrow *item : totalshooted)                                       //射出的弓箭
     {
-        item->setPos(item->pos()+item->fall_v*deltaTime);
+        item->setPos(item->pos() + item->fall_v * deltaTime);
     }
-    for(Arrow* item:totalshooted_2)
+    for (Arrow *item : totalshooted_2)
     {
-        item->setPos(item->pos()+item->fall_v*deltaTime);
+        item->setPos(item->pos() + item->fall_v * deltaTime);
     }
 }
 
@@ -361,14 +364,14 @@ void BattleScene::processPicking()
 {
     Scene::processPicking();
 
-    for (Character* chara : characters)
+    for (Character *chara : characters)
     {
         if (chara->isPicking())
         {
             auto mountable = findNearestUnmountedMountable(chara->pos(), 100);
             if (mountable != nullptr)
             {
-                if (auto newArrow = dynamic_cast<Arrow*>(mountable)) // 捡起箭头
+                if (auto newArrow = dynamic_cast<Arrow *>(mountable)) // 捡起箭头
                 {
                     chara->pickupArrow(newArrow);
                 }
@@ -380,89 +383,89 @@ void BattleScene::processPicking()
         }
     }
 }
-// test wty 1
+// test wty
 void BattleScene::HeroInPut(Character *character)                        //人物移动与拾取
 {
     Scene::processInput();
 
-    QRectF iceRec=iceplat->sceneBoundingRect();
-    QRectF fireRec=fireplat->sceneBoundingRect();
-    QRectF rockRec=rockplat->sceneBoundingRect();
-    int x=character->pos().x();
-    int y=character->pos().y();
-    int h=character->boundingRect().height();
+    QRectF iceRec = iceplat->sceneBoundingRect();
+    QRectF fireRec = fireplat->sceneBoundingRect();
+    QRectF rockRec = rockplat->sceneBoundingRect();
+    int x = character->pos().x();
+    int y = character->pos().y();
+    int h = character->boundingRect().height();
 
     if (character != nullptr)
     {
-        auto v=QPointF(0, 0);
+        auto v = QPointF(0, 0);
         v.setY(character->getVelocity().y());
-        if(character->isLeftDown())
+        if (character->isLeftDown())
         {
 
             v.setX(-0.3);
             character->setTransform(QTransform().scale(1, 1));
 
         }
-        if(character->isRightDown())
+        if (character->isRightDown())
         {
             v.setX(0.3);
             character->setTransform(QTransform().scale(-1, 1));
         }
-        if(character->isJumpDown())                                                             //跳跃时检测在地面还是在某个平台
+        if (character->isJumpDown())                                                             //跳跃时检测在地面还是在某个平台
         {
-            if((v.y()==0)&&(character->pos().y()-map->getFloorHeight())<20&&character->isonground())
+            if ((v.y() == 0) && (character->pos().y() - map->getFloorHeight()) < 20 && character->isonground())
             {
                 v.setY(-0.8);
 
             }
-            else if((v.y()==0)&&(y-iceRec.top())<20&&(x>iceRec.left())&&(x<iceRec.right()))
+            else if ((v.y() == 0) && (y - iceRec.top()) < 20 && (x > iceRec.left()) && (x < iceRec.right()))
             {
                 v.setY(-0.8);
             }
-            else if(fireplat->pos().x()!=-1000)                                                 //木制平台未被燃烧至消失时
+            else if (fireplat->pos().x() != -1000)                                                 //木制平台未被燃烧至消失时
             {
-                if((v.y()==0)&&(y-fireRec.top())<20&&(x>fireRec.left())&&(x<fireRec.right()))
+                if ((v.y() == 0) && (y - fireRec.top()) < 20 && (x > fireRec.left()) && (x < fireRec.right()))
                 {
                     v.setY(-0.8);
                 }
             }
-            if((v.y()==0)&&(y-rockRec.top())<20&&(x>rockRec.left())&&(x<rockRec.right()))
+            if ((v.y() == 0) && (y - rockRec.top()) < 20 && (x > rockRec.left()) && (x < rockRec.right()))
             {
                 v.setY(-0.8);
             }
         }
-        if(character->getVelocity().y()!=0)                                                     //人物在空中就会受到重力加速度
+        if (character->getVelocity().y() != 0)                                                     //人物在空中就会受到重力加速度
         {
-            v.setY(v.y()+0.02);
-            if(character->pos().y()>map->getFloorHeight())
+            v.setY(v.y() + 0.02);
+            if (character->pos().y() > map->getFloorHeight())
             {
                 v.setY(0);
             }
         }
-        for(PlatForm* platform:platforms)
+        for (PlatForm *platform : platforms)
         {
-            QRectF platRec=platform->sceneBoundingRect();
-            if(platform->exists())
+            QRectF platRec = platform->sceneBoundingRect();
+            if (platform->exists())
             {
-                if(x>(platRec.left()-5)&&x<(platRec.right()+5))
+                if (x > (platRec.left() - 5) && x < (platRec.right() + 5))
                 {
 
-                    if(y>(platRec.bottom()-h)&&y<(platRec.bottom()+200))
+                    if (y > (platRec.bottom() - h) && y < (platRec.bottom() + 200))
                     {
 
 
-                        if(character->isLeftDown()&&x>platRec.right())
+                        if (character->isLeftDown() && x > platRec.right())
                         {
                             v.setX(0);
                         }
-                        if(character->isRightDown()&&x<platRec.left())
+                        if (character->isRightDown() && x < platRec.left())
                         {
                             v.setX(0);
                         }
                     }
                     else
                     {
-                        if(v.y()>0&&abs(y-platRec.top())<5)
+                        if (v.y() > 0 && abs(y - platRec.top()) < 5)
                         {
                             v.setY(0);
                         }
@@ -470,7 +473,7 @@ void BattleScene::HeroInPut(Character *character)                        //人�
                 }
                 else
                 {
-                    if((abs(y-platRec.top())<5&&v.y()==0))
+                    if ((abs(y - platRec.top()) < 5 && v.y() == 0))
                     {
                         v.setY(0.02);
                     }
@@ -478,14 +481,14 @@ void BattleScene::HeroInPut(Character *character)                        //人�
             }
             else
             {
-                if(character->pos().x()>1000)
+                if (character->pos().x() > 1000)
 
                 {
-                    if(v.y()==0&&y<map->getFloorHeight())
+                    if (v.y() == 0 && y < map->getFloorHeight())
                     {
-                        v.setY(v.y()+0.001);
+                        v.setY(v.y() + 0.001);
                     }
-                    if(v.y()>0&&y>map->getFloorHeight()-5)
+                    if (v.y() > 0 && y > map->getFloorHeight() - 5)
                     {
                         v.setY(0);
                     }
@@ -495,23 +498,24 @@ void BattleScene::HeroInPut(Character *character)                        //人�
 
         }
 
-        if(x<0&&character->isLeftDown())                                                                    //控制人物不能离开左右边界
+        if (x < 0 && character->isLeftDown())                                                                    //控制人物不能离开左右边界
         {
-            character->setPos(0,character->pos().y());
+            character->setPos(0, character->pos().y());
         }
-        if(x>1280-character->sceneBoundingRect().width())
+        if (x > 1280 - character->sceneBoundingRect().width())
         {
-            character->setPos(1280-character->sceneBoundingRect().width(),character->pos().y());
+            character->setPos(1280 - character->sceneBoundingRect().width(), character->pos().y());
         }
         character->setVelocity(v);
-        if (!character->isLastPickDowm() &&character->isPickDown())                                         //拾取
+        if (!character->isLastPickDowm() && character->isPickDown())                                         //拾取
         { // first time pickDown
             character->setPicking(true);
-        } else
+        }
+        else
         {
             character->setPicking(false);
         }
-        bool is=character->isPickDown();
+        bool is = character->isPickDown();
         character->setLastPickDown(is);
 
     }
@@ -519,23 +523,27 @@ void BattleScene::HeroInPut(Character *character)                        //人�
 
 void BattleScene::fall()                                                 //掉落间隔
 {
-    static int interval=0;
+    static int interval = 0;
     interval++;
-    if(interval<270)
+    if (interval < 270)
     {
         return;
     }
 
-    int num=rand()%(18);                                               //掉落，随机位置，随机物品
-    int x=rand()%(1270);
-    interval=0;
-    fallthing(x,num);
+    int num = rand() % (18);                                               //掉落，随机位置，随机物品
+    int x = rand() % (1270);
+    interval = 0;
+    fallthing(x, num);
 }
 
 void BattleScene::handlefallthing()                                      //更新掉落物速度
 {
-    for (Item *item:total_random_fallthing)
+    for (Item *item : total_random_fallthing)
     {
+        if (totalshooted.contains(item) || totalshooted_2.contains(item))
+        {
+            continue;
+        }
         gravity(item);
 
     }
@@ -543,17 +551,17 @@ void BattleScene::handlefallthing()                                      //更�
 
 void BattleScene::deletefallthing()                                      //生成的掉落物品每隔一段时间消失
 {
-    static int num=0;
-    QPoint p(200,200);
+    static int num = 0;
+    QPoint p(200, 200);
     num++;
-    if(num<500)
+    if (num < 500)
     {
-        return ;
+        return;
     }
 
     for (auto it = total_random_fallthing.begin(); it != total_random_fallthing.end(); ++it)
     {
-        Item* item = *it;
+        Item *item = *it;
         if (item->pos().x() != -200 && item->pos().y() != -200)
         {
             if (item->parentItem() != character && item->parentItem() != character_2)
@@ -568,13 +576,13 @@ void BattleScene::deletefallthing()                                      //生�
     }
 }
 
-void BattleScene::fallthing(int x,int num)                               //生成掉落物
+void BattleScene::fallthing(int x, int num)                               //生成掉落物
 {
     switch (num)
     {
     case 1:
-    {   Armor * elecbreakerarmor=new ElecBreakerArmor();
-        elecbreakerarmor->setPos(x,0);
+    {   Armor *elecbreakerarmor = new ElecBreakerArmor();
+        elecbreakerarmor->setPos(x, 0);
         elecbreakerarmor->setScale(0.2);
         elecbreakerarmor->unmount();
         elecbreakerarmor->fall_v.setY(0);
@@ -585,8 +593,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 2:
     {
-        Armor * flamebreakerarmor=new FlamebreakerArmor();
-        flamebreakerarmor->setPos(x,0);
+        Armor *flamebreakerarmor = new FlamebreakerArmor();
+        flamebreakerarmor->setPos(x, 0);
         flamebreakerarmor->setScale(0.4);
         flamebreakerarmor->unmount();
         flamebreakerarmor->fall_v.setX(0);
@@ -597,8 +605,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 3:
     {
-        Armor * icebreakerarmor=new IceBreakerArmor();
-        icebreakerarmor->setPos(x,0);
+        Armor *icebreakerarmor = new IceBreakerArmor();
+        icebreakerarmor->setPos(x, 0);
         icebreakerarmor->setScale(0.4);
         icebreakerarmor->unmount();
         icebreakerarmor->fall_v.setX(0);
@@ -609,8 +617,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 4:
     {
-        HeadEquipment * flamebreakerhead=new FlameBreakerHead();
-        flamebreakerhead->setPos(x,0);
+        HeadEquipment *flamebreakerhead = new FlameBreakerHead();
+        flamebreakerhead->setPos(x, 0);
         flamebreakerhead->setScale(0.4);
         flamebreakerhead->unmount();
         flamebreakerhead->fall_v.setX(0);
@@ -621,8 +629,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 5:
     {
-        HeadEquipment * elecbreakerhead=new ElecBreakerHead();
-        elecbreakerhead->setPos(x,0);
+        HeadEquipment *elecbreakerhead = new ElecBreakerHead();
+        elecbreakerhead->setPos(x, 0);
         elecbreakerhead->setScale(0.3);
         elecbreakerhead->unmount();
         elecbreakerhead->fall_v.setX(0);
@@ -633,8 +641,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 6:
     {
-        HeadEquipment * icebreakerhead=new IceBreakerHead();
-        icebreakerhead->setPos(x,0);
+        HeadEquipment *icebreakerhead = new IceBreakerHead();
+        icebreakerhead->setPos(x, 0);
         icebreakerhead->setScale(0.3);
         icebreakerhead->unmount();
         icebreakerhead->fall_v.setX(0);
@@ -645,8 +653,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 7:
     {
-        LegEquipment * flamebreaketrou=new FlameBreakerTrou();
-        flamebreaketrou->setPos(x,0);
+        LegEquipment *flamebreaketrou = new FlameBreakerTrou();
+        flamebreaketrou->setPos(x, 0);
         flamebreaketrou->setScale(0.4);
         flamebreaketrou->unmount();
         flamebreaketrou->fall_v.setX(0);
@@ -657,8 +665,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 8:
     {
-        LegEquipment * icebreaketrou=new IceBreakerTrou();
-        icebreaketrou->setPos(x,0);
+        LegEquipment *icebreaketrou = new IceBreakerTrou();
+        icebreaketrou->setPos(x, 0);
         icebreaketrou->setScale(0.4);
         icebreaketrou->unmount();
         icebreaketrou->fall_v.setX(0);
@@ -669,8 +677,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 9:
     {
-        LegEquipment * elecbreaketrou=new ElecBreakerTrou();
-        elecbreaketrou->setPos(x,0);
+        LegEquipment *elecbreaketrou = new ElecBreakerTrou();
+        elecbreaketrou->setPos(x, 0);
         elecbreaketrou->setScale(0.4);
         elecbreaketrou->unmount();
         elecbreaketrou->fall_v.setX(0);
@@ -681,8 +689,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 10:
     {
-        Sword *doubleicemetal=new Double_Ice_Metal();
-        doubleicemetal->setPos(x,0);
+        Sword *doubleicemetal = new Double_Ice_Metal();
+        doubleicemetal->setPos(x, 0);
         doubleicemetal->setScale(0.4);
         doubleicemetal->unmount();
         doubleicemetal->fall_v.setX(0);
@@ -693,8 +701,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 11:
     {
-        Sword* longelecmetal=new Long_Elec_Metal();
-        longelecmetal->setPos(x,0);
+        Sword *longelecmetal = new Long_Elec_Metal();
+        longelecmetal->setPos(x, 0);
         longelecmetal->setScale(0.4);
         longelecmetal->unmount();
         longelecmetal->fall_v.setX(0);
@@ -705,8 +713,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 12:
     {
-        Sword* shortflamewooden=new Short_Flame_Wooden();
-        shortflamewooden->setPos(x,0);
+        Sword *shortflamewooden = new Short_Flame_Wooden();
+        shortflamewooden->setPos(x, 0);
         shortflamewooden->setScale(0.4);
         shortflamewooden->unmount();
         shortflamewooden->fall_v.setX(0);
@@ -717,8 +725,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 13:
     {
-        Bow* longicemetal=new Lone_Ice_Metal();
-        longicemetal->setPos(x,0);
+        Bow *longicemetal = new Lone_Ice_Metal();
+        longicemetal->setPos(x, 0);
         longicemetal->setScale(0.4);
         longicemetal->unmount();
         longicemetal->fall_v.setX(0);
@@ -729,8 +737,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 14:
     {
-        Bow*middleelecmetal=new Middle_Elec_Metal();
-        middleelecmetal->setPos(x,0);
+        Bow *middleelecmetal = new Middle_Elec_Metal();
+        middleelecmetal->setPos(x, 0);
         middleelecmetal->setScale(0.4);
         middleelecmetal->unmount();
         middleelecmetal->fall_v.setX(0);
@@ -741,8 +749,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 15:
     {
-        Bow* shortflamewooden=new Short_Flame_Wooden_Bow();
-        shortflamewooden->setPos(x,0);
+        Bow *shortflamewooden = new Short_Flame_Wooden_Bow();
+        shortflamewooden->setPos(x, 0);
         shortflamewooden->setScale(0.4);
         shortflamewooden->unmount();
         shortflamewooden->fall_v.setX(0);
@@ -753,8 +761,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 16:
     {
-        Arrow* elecarrow=new Elec_Arrow();
-        elecarrow->setPos(x,0);
+        Arrow *elecarrow = new Elec_Arrow();
+        elecarrow->setPos(x, 0);
         elecarrow->setScale(0.2);
         elecarrow->unmount();
         elecarrow->fall_v.setX(0);
@@ -765,8 +773,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 17:
     {
-        Arrow* icearrow=new Ice_Arrow();
-        icearrow->setPos(x,0);
+        Arrow *icearrow = new Ice_Arrow();
+        icearrow->setPos(x, 0);
         icearrow->setScale(0.2);
         icearrow->unmount();
         icearrow->fall_v.setX(0);
@@ -777,8 +785,8 @@ void BattleScene::fallthing(int x,int num)                               //生�
     }
     case 18:
     {
-        Arrow* flamearrow=new Flame_Arrow();
-        flamearrow->setPos(x,0);
+        Arrow *flamearrow = new Flame_Arrow();
+        flamearrow->setPos(x, 0);
         flamearrow->setScale(0.2);
         flamearrow->unmount();
         flamearrow->fall_v.setX(0);
@@ -794,14 +802,14 @@ void BattleScene::fallthing(int x,int num)                               //生�
 
 void BattleScene::handleCheatLine()                                      //设置信号与槽，摁下回车则调用fallthing函数
 {
-    QString text=lineEdit->text();
-    int num=0;
-    if(text.toInt()!=0&&text.length()==2)
+    QString text = lineEdit->text();
+    int num = 0;
+    if (text.toInt() != 0 && text.length() == 2)
     {
-        num=text.toInt();
+        num = text.toInt();
     }
-    int x=rand()%(1270);
-    fallthing(x,num);
+    int x = rand() % (1270);
+    fallthing(x, num);
 }
 
 void BattleScene::attack()
@@ -814,8 +822,8 @@ void BattleScene::attack()
     }
     num = 0;
 
-    
-    Character* opponents[] = {character_2, character};
+
+    Character *opponents[] = {character_2, character};
 
     for (int i = 0; i < 2; ++i)
     {
@@ -839,7 +847,7 @@ void BattleScene::attack()
 
 void BattleScene::changeweapon()
 {
-    for (Character* chara : characters)
+    for (Character *chara : characters)
     {
         if (chara->ischangeweaponDown() && !chara->ice_attacked)
         {
@@ -858,17 +866,17 @@ void BattleScene::cast()
     }
     num = 0;
 
-    Character* characters[] = {character, character_2};
-    QVector<Sword*>* totalCasting[] = {&totalcasting, &totalcasting_2}; // 使用指针数组指向 totalcasting 和 totalcasting_2
+    Character *characters[] = {character, character_2};
+    QVector<Sword *> *totalCasting[] = {&totalcasting, &totalcasting_2}; // 使用指针数组指向 totalcasting 和 totalcasting_2
 
     for (int i = 0; i < 2; ++i)
     {
-        Character* chara = characters[i];
+        Character *chara = characters[i];
         if (!chara->ice_attacked && chara->isCastDown() && chara->now_weapon != nullptr)
         {
             if (chara->now_weapon == chara->sword) // 当前使用近战武器
             {
-                Sword* castthing = chara->getsword();
+                Sword *castthing = chara->getsword();
                 if (castthing != nullptr)
                 {
                     castthing->setPos(chara->pos().x(), chara->pos().y() - 130);
@@ -884,13 +892,13 @@ void BattleScene::cast()
                 int distance = chara->bow->attackdistance;
                 for (int j = 0; j < arrowCount; j++)
                 {
-                    Arrow* shootedarrow = chara->getshootedarrow();
+                    Arrow *shootedarrow = chara->getshootedarrow();
                     if (shootedarrow != nullptr)
                     {
                         shootedarrow->setPos(chara->pos().x(), chara->pos().y() - 100);
                         if (chara->isFace()) // 确定人物朝向
                         {
-                            shootedarrow->fall_v.setX(distance == 900 ? 3 : (distance == 650 ? 2.4 : 1.8));
+                            shootedarrow->fall_v.setX(distance == 900 ? 3 : (distance == 650 ? 1 : 0.9));
                             shootedarrow->setRotation(45);
                         }
                         else
@@ -907,132 +915,132 @@ void BattleScene::cast()
     }
 }
 
-void BattleScene::gravity(Item *item,qreal g)                                    //重力的实现
+void BattleScene::gravity(Item *item, qreal g)                                    //重力的实现
 {
-    int x=item->pos().x();
-    int y=item->pos().y();
+    int x = item->pos().x();
+    int y = item->pos().y();
 
-    if(item->parentItem()!=character&&item->parentItem()!=character_2)  //处理那些没有被捡起的物品
+    if (item->parentItem() != character && item->parentItem() != character_2)  //处理那些没有被捡起的物品
     {
-        if(x>=0&&x<270)                                                 //根据横坐标不同，讨论不同的落点
+        if (x >= 0 && x < 270)                                                 //根据横坐标不同，讨论不同的落点
         {
-            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
             {
-                item->fall_v.setY(item->fall_v.y()+g);
+                item->fall_v.setY(item->fall_v.y() + g);
             }
             else
             {
                 item->fall_v.setY(0);
             }
-            if(y>map->getFloorHeight()-10)
+            if (y > map->getFloorHeight() - 10)
             {
-                item->setPos(x,map->getFloorHeight());
+                item->setPos(x, map->getFloorHeight());
             }
         }
-        else if(x>=270&&x<(270+iceplat->boundingRect().width()))
+        else if (x >= 270 && x < (270 + iceplat->boundingRect().width()))
         {
-            if(item->fall_v.y()>=0&&y<(300-30))
+            if (item->fall_v.y() >= 0 && y < (300 - 30))
             {
-                item->fall_v.setY(item->fall_v.y()+g);
+                item->fall_v.setY(item->fall_v.y() + g);
             }
             else
             {
                 item->fall_v.setY(0);
             }
-            if(y>290)
+            if (y > 290)
             {
-                item->setPos(x,300);
+                item->setPos(x, 300);
             }
         }
-        else if(x>=(270+iceplat->boundingRect().width())&&x<560)
+        else if (x >= (270 + iceplat->boundingRect().width()) && x < 560)
         {
-            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
             {
-                item->fall_v.setY(item->fall_v.y()+g);
+                item->fall_v.setY(item->fall_v.y() + g);
             }
             else
             {
                 item->fall_v.setY(0);
             }
-            if(y>(map->getFloorHeight()-10))
+            if (y > (map->getFloorHeight() - 10))
             {
-                item->setPos(x,map->getFloorHeight());
+                item->setPos(x, map->getFloorHeight());
             }
         }
-        else if(x>=560&&x<(560+rockplat->boundingRect().width()))
+        else if (x >= 560 && x < (560 + rockplat->boundingRect().width()))
         {
-            if(item->fall_v.y()>=0&&y<(110)&&y!=-120)
+            if (item->fall_v.y() >= 0 && y < (110) && y != -120)
             {
-                item->fall_v.setY(item->fall_v.y()+g);
+                item->fall_v.setY(item->fall_v.y() + g);
             }
-            else if(item->fall_v.y()>0&&y>=110&&y<150)
+            else if (item->fall_v.y() > 0 && y >= 110 && y < 150)
             {
                 item->fall_v.setY(0);
-                item->setPos(x,120);
+                item->setPos(x, 120);
             }
-            if(y>170)
+            if (y > 170)
             {
-                item->fall_v.setY(item->fall_v.y()+g);
-                if(y>map->getFloorHeight())
+                item->fall_v.setY(item->fall_v.y() + g);
+                if (y > map->getFloorHeight())
                 {
-                    item->setPos(-120,-120);
+                    item->setPos(-120, -120);
                     item->fall_v.setX(0);
                     item->fall_v.setY(0);
                 }
             }
 
         }
-        else if(x>=(560+rockplat->boundingRect().width())&&x<1000)
+        else if (x >= (560 + rockplat->boundingRect().width()) && x < 1000)
         {
-            if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+            if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
             {
-                item->fall_v.setY(item->fall_v.y()+g);
+                item->fall_v.setY(item->fall_v.y() + g);
             }
             else
             {
                 item->fall_v.setY(0);
             }
-            if(y>map->getFloorHeight()-10)
+            if (y > map->getFloorHeight() - 10)
             {
-                item->setPos(x,map->getFloorHeight());
+                item->setPos(x, map->getFloorHeight());
             }
         }
         else
         {
-            if(fireplat->pos().x()==-1000)
+            if (fireplat->pos().x() == -1000)
             {
-                if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
                 {
-                    item->fall_v.setY(item->fall_v.y()+g);
+                    item->fall_v.setY(item->fall_v.y() + g);
                 }
                 else
                 {
                     item->fall_v.setY(0);
                 }
-                if(y>map->getFloorHeight()-10)
+                if (y > map->getFloorHeight() - 10)
                 {
-                    item->setPos(x,map->getFloorHeight());
+                    item->setPos(x, map->getFloorHeight());
                 }
             }
             else
             {
-                if(item->fall_v.y()>=0&&y<(320-30))
+                if (item->fall_v.y() >= 0 && y < (320 - 30))
                 {
-                    item->fall_v.setY(item->fall_v.y()+g);
+                    item->fall_v.setY(item->fall_v.y() + g);
                 }
                 else
                 {
                     item->fall_v.setY(0);
                 }
-                if(y>310)
+                if (y > 310)
                 {
-                    item->setPos(x,320);
+                    item->setPos(x, 320);
                 }
             }
 
         }
     }
-    if(item->fall_v.y()>=0.8)
+    if (item->fall_v.y() >= 0.8)
     {
         item->fall_v.setY(0.8);
     }
@@ -1040,37 +1048,37 @@ void BattleScene::gravity(Item *item,qreal g)                                   
 }
 void BattleScene::handlecastthing()
 {
-    for(Sword* item:totalcasting)                                               //人物一所投掷的近战武器，位置更新和伤害判定
+    for (Sword *item : totalcasting)                                               //人物一所投掷的近战武器，位置更新和伤害判定
     {
-        if(item==NULL)
+        if (item == NULL)
         {
             continue;
         }
-        handlecastweapon(item,character,character_2);
+        handlecastweapon(item, character, character_2);
     }
-    for(Sword* item:totalcasting_2)                                                         //人物二所投掷的近战武器，位置更新和伤害判定
+    for (Sword *item : totalcasting_2)                                                         //人物二所投掷的近战武器，位置更新和伤害判定
     {
-        if(item==NULL)
+        if (item == NULL)
         {
             continue;
         }
-        handlecastweapon(item,character_2,character);
+        handlecastweapon(item, character_2, character);
     }
-    for(Arrow* item:totalshooted_2)                                                         //人物二所射出的箭头，位置更新和伤害判定
+    for (Arrow *item : totalshooted_2)                                                         //人物二所射出的箭头，位置更新和伤害判定
     {
-        if(item==NULL)
+        if (item == NULL)
         {
             continue;
         }
-        handleshootarrowattack(item,character,character_2);
+        handleshootarrowattack(item, character, character_2);
     }
-    for(Arrow* item:totalshooted)                                                                           //人物二所射出的箭头，位置更新和伤害判定，以下与人物以同理
+    for (Arrow *item : totalshooted)                                                                           //人物二所射出的箭头，位置更新和伤害判定，以下与人物以同理
     {
-        if(item==NULL)
+        if (item == NULL)
         {
             continue;
         }
-        handleshootarrowattack(item,character_2,character);
+        handleshootarrowattack(item, character_2, character);
     }
 
 }
@@ -1101,11 +1109,11 @@ void BattleScene::gameover(QString text)                                //游戏
 
 void BattleScene::changearrow()
 {
-    if(character->ischangearrowDown()&&!character->ice_attacked)        //人物被冰冻时不能进行其他操作
+    if (character->ischangearrowDown() && !character->ice_attacked)        //人物被冰冻时不能进行其他操作
     {
         character->changenow_arrow();
     }
-    if(character_2->ischangearrowDown()&&!character_2->ice_attacked)
+    if (character_2->ischangearrowDown() && !character_2->ice_attacked)
     {
         character_2->changenow_arrow();
     }
@@ -1114,22 +1122,22 @@ void BattleScene::changearrow()
 void BattleScene::attackanimation()                                     //判断场上物品的受击状态，显示其受击效果（燃烧，触电，冰冻），以及人物攻击动画
 {
 
-    for(Character *character:characters)
+    for (Character *character : characters)
     {
-        if(character->isattack())                                                       //人物的攻击动画
+        if (character->isattack())                                                       //人物的攻击动画
         {
-            if(character->now_weapon!=NULL)
+            if (character->now_weapon != NULL)
             {
-                bool nowface=character->isFace();
-                if(dynamic_cast<Double_Ice_Metal*>(character->now_weapon))              //双手刀实现两面攻击。用人物转身示意
+                bool nowface = character->isFace();
+                if (dynamic_cast<Double_Ice_Metal *>(character->now_weapon))              //双手刀实现两面攻击。用人物转身示意
                 {
-                    static int num=0;
-                    character->now_weapon->setRotation(num*9);                          //有效攻击判定
+                    static int num = 0;
+                    character->now_weapon->setRotation(num * 9);                          //有效攻击判定
 
                     num++;
-                    if(num==20)
+                    if (num == 20)
                     {
-                        if(nowface==false)
+                        if (nowface == false)
                         {
                             character->setTransform(QTransform().scale(-1, 1));
                             character->setface(true);
@@ -1142,23 +1150,23 @@ void BattleScene::attackanimation()                                     //判断
 
                         }
                     }
-                    if(num>40)
+                    if (num > 40)
                     {
-                        num=0;
+                        num = 0;
                         character->setattackstate(false);
                     }
 
                 }
                 else                                                                    //其余武器攻击时只是旋转，不用转身
                 {
-                    static int num=0;
-                    character->now_weapon->setRotation(num*9);
+                    static int num = 0;
+                    character->now_weapon->setRotation(num * 9);
 
                     num++;
-                    if(num>40)
+                    if (num > 40)
                     {
                         character->setattackstate(false);
-                        num=0;
+                        num = 0;
                     }
                 }
 
@@ -1167,50 +1175,50 @@ void BattleScene::attackanimation()                                     //判断
         }
     }
 
-    for(QGraphicsItem*item:items())                                                     //处理其他所有物品的受击效果
+    for (QGraphicsItem *item : items())                                                     //处理其他所有物品的受击效果
     {
-        if(auto m_item=dynamic_cast<Item*>(item))
+        if (auto m_item = dynamic_cast<Item *>(item))
         {
-            if(m_item->flame_attacked)
+            if (m_item->flame_attacked)
             {
 
-                if(auto hero=dynamic_cast<Link*>(item))                                 //人物着火时持续受到伤害
+                if (auto hero = dynamic_cast<Link *>(item))                                 //人物着火时持续受到伤害
                 {
-                    static int num_1=0;
+                    static int num_1 = 0;
                     num_1++;
-                    if(num_1%50==0)
+                    if (num_1 % 50 == 0)
                     {
-                        hero->lifevalue-=1;
+                        hero->lifevalue -= 1;
                         hero->bloodbar->setValue(hero->lifevalue);
                     }
 
-                    if(num_1>250)
+                    if (num_1 > 250)
                     {
-                        num_1=0;
-                        hero->flame_attacked=false;
+                        num_1 = 0;
+                        hero->flame_attacked = false;
                         hero->flameItem->setVisible(false);
                     }
-                    if(hero->now_weapon!=NULL)                                          //检测手中的弓或剑是否是木制
+                    if (hero->now_weapon != NULL)                                          //检测手中的弓或剑是否是木制
                     {
-                        if(auto weapon=dynamic_cast<Sword*>(hero->now_weapon))
+                        if (auto weapon = dynamic_cast<Sword *>(hero->now_weapon))
                         {
-                            if(weapon->material=="Wooden")
+                            if (weapon->material == "Wooden")
                             {
                                 hero->now_weapon->flameItem->setVisible(true);
-                                hero->now_weapon->flame_attacked=true;
+                                hero->now_weapon->flame_attacked = true;
                             }
-                            (void)dynamic_cast<Item*>(hero->now_weapon);
+                            (void)dynamic_cast<Item *>(hero->now_weapon);
                         }
                         else
                         {
-                            if(auto weapon=dynamic_cast<Bow*>(hero->now_weapon))
+                            if (auto weapon = dynamic_cast<Bow *>(hero->now_weapon))
                             {
-                                if(weapon->material=="Wooden")
+                                if (weapon->material == "Wooden")
                                 {
                                     hero->now_weapon->flameItem->setVisible(true);
-                                    hero->now_weapon->flame_attacked=true;
+                                    hero->now_weapon->flame_attacked = true;
                                 }
-                                (void)dynamic_cast<Item*>(hero->now_weapon);
+                                (void)dynamic_cast<Item *>(hero->now_weapon);
                             }
                         }
 
@@ -1220,79 +1228,92 @@ void BattleScene::attackanimation()                                     //判断
                 }
                 else                                                                    //其他物品点燃后过一段时间会消失
                 {
-                    static int num_1=0;
-                    static int life=0;
+                    static int num_1 = 0;
+                    static int life = 0;
+
                     num_1++;
-                    if(num_1>250)
+                    if (num_1 > 250)
                     {
-                        num_1=0;
+                        num_1 = 0;
                         life++;
-                        m_item->flame_attacked=false;
+                        m_item->flame_attacked = false;
                         m_item->flameItem->setVisible(false);
+
                     }
-                    if(life>3)
+                    if (life > 3)
                     {
-                        m_item->setPos(-1000,-1000);
-                        fireplat->setPos(-1000,-1000);
-                        life=0;
+                        m_item->setPos(-1000, -1000);
+                        removeItem(m_item);
+                        if (item->pos().x() > 1000 && item->pos().y() > 200 && item->pos().y() < 340)
+                        {
+                            fireplat->platform_life--;
+                            if (fireplat->platform_life <= 0)
+                            {
+                                fireplat->setPos(-1000, -1000);
+                                fireplat->flame_attacked = false;
+                                fireplat->flameItem->setVisible(false);
+
+                            }
+                        }
+                        life = 0;
                     }
                 }
             }
-            if(m_item->ice_attacked)                                                  //被冰属性攻击后人物被冰冻
+            if (m_item->ice_attacked)                                                  //被冰属性攻击后人物被冰冻
             {
-                static int num_2=0;
+                static int num_2 = 0;
                 num_2++;
-                if(num_2>250)
+                if (num_2 > 250)
                 {
-                    num_2=0;
-                    m_item->ice_attacked=false;
+                    num_2 = 0;
+                    m_item->ice_attacked = false;
                     m_item->iceItem->setVisible(false);
                 }
 
 
             }
-            if(m_item->elec_attacked)                                                   //被电击的攻击效果
+            if (m_item->elec_attacked)                                                   //被电击的攻击效果
             {
 
-                if(auto hero=dynamic_cast<Link*>(item))                                 //人物被电击，受到持续伤害
+                if (auto hero = dynamic_cast<Link *>(item))                                 //人物被电击，受到持续伤害
                 {
-                    static int num_3=0;
+                    static int num_3 = 0;
                     num_3++;
-                    if(num_3%50==0)
+                    if (num_3 % 50 == 0)
                     {
-                        hero->lifevalue-=1;
+                        hero->lifevalue -= 1;
                         hero->bloodbar->setValue(hero->lifevalue);
                     }
 
-                    if(num_3>250)
+                    if (num_3 > 250)
                     {
-                        num_3=0;
-                        hero->elec_attacked=false;
+                        num_3 = 0;
+                        hero->elec_attacked = false;
                         hero->elecItem->setVisible(false);
                     }
-                    if(hero->now_weapon!=NULL)                                          //检测手中的弓或剑是否是金属材质，如果是金属材质，则掉落需重新捡起
+                    if (hero->now_weapon != NULL)                                          //检测手中的弓或剑是否是金属材质，如果是金属材质，则掉落需重新捡起
                     {
-                        if(auto weapon=dynamic_cast<Sword*>(hero->now_weapon))
+                        if (auto weapon = dynamic_cast<Sword *>(hero->now_weapon))
                         {
-                            if(weapon->material=="Metal")
+                            if (weapon->material == "Metal")
                             {
-                                auto castthing=hero->getsword();
-                                castthing->setPos(hero->pos().x(),hero->pos().y()-80);
+                                auto castthing = hero->getsword();
+                                castthing->setPos(hero->pos().x(), hero->pos().y() - 80);
                                 hero->charactercast();
                             }
-                            (void)dynamic_cast<Item*>(hero->now_weapon);
+                            (void)dynamic_cast<Item *>(hero->now_weapon);
                         }
                         else
                         {
-                            if(auto weapon=dynamic_cast<Bow*>(hero->now_weapon))
+                            if (auto weapon = dynamic_cast<Bow *>(hero->now_weapon))
                             {
-                                if(weapon->material=="Metal")
+                                if (weapon->material == "Metal")
                                 {
-                                    auto castthing=hero->getbow();
-                                    castthing->setPos(hero->pos().x(),hero->pos().y()-80);
+                                    auto castthing = hero->getbow();
+                                    castthing->setPos(hero->pos().x(), hero->pos().y() - 80);
                                     hero->characterdropbow();
                                 }
-                                (void)dynamic_cast<Item*>(hero->now_weapon);
+                                (void)dynamic_cast<Item *>(hero->now_weapon);
                             }
                         }
 
@@ -1301,12 +1322,12 @@ void BattleScene::attackanimation()                                     //判断
                 }
                 else                                                                    //其他物品被电击，显现电击效果
                 {
-                    static int num_3=0;
+                    static int num_3 = 0;
                     num_3++;
-                    if(num_3>250)
+                    if (num_3 > 250)
                     {
-                        num_3=0;
-                        m_item->elec_attacked=false;
+                        num_3 = 0;
+                        m_item->elec_attacked = false;
                         m_item->elecItem->setVisible(false);
                     }
                 }
@@ -1314,7 +1335,7 @@ void BattleScene::attackanimation()                                     //判断
             }
 
         }
-        (void)dynamic_cast<Item*>(item);
+        (void)dynamic_cast<Item *>(item);
 
 
     }
@@ -1324,210 +1345,235 @@ void BattleScene::attackanimation()                                     //判断
 
 void BattleScene::burnt()
 {
-    if(fireplat->flame_attacked)
+    if (fireplat->flame_attacked)
     {
-        for(Item* item:total_random_fallthing)
+        for (Item *item : total_random_fallthing)
         {
-            if(auto sword=dynamic_cast<Sword*>(item))
+            if (auto sword = dynamic_cast<Sword *>(item))
             {
-                if(sword->material=="Wooden")                                                           //木制平台燃烧导致周围木制武器（弓和箭，无论是否捡起）被点燃
+                if (sword->material == "Wooden")                                                           //木制平台燃烧导致周围木制武器（弓和箭，无论是否捡起）被点燃
                 {
-                    if(sword->pos().x()>1000&&sword->pos().y()>150&&sword->pos().y()<340)
+                    if (sword->pos().x() > 1000 && sword->pos().y() > 150 && sword->pos().y() < 340)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
                 }
             }
-            else if(auto sword=dynamic_cast<Bow*>(item))
+            else if (auto sword = dynamic_cast<Bow *>(item))
             {
-                if(sword->material=="Wooden")
+                if (sword->material == "Wooden")
                 {
-                    if(sword->pos().x()>1000&&sword->pos().y()>200&&sword->pos().y()<340)
+                    if (sword->pos().x() > 1000 && sword->pos().y() > 200 && sword->pos().y() < 340)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
                 }
             }
-            (void)dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item *>(item);
 
         }
-        if(character->pos().x()>1000&&character->pos().y()>200&&character->pos().y()<340)                   //人在着火平台旁会持续受到伤害
+        if (character->pos().x() > 1000 && character->pos().y() > 200 && character->pos().y() < 340)                   //人在着火平台旁会持续受到伤害
         {
             character->flameItem->setVisible(true);
-            character->flame_attacked=true;
+            character->flame_attacked = true;
         }
-        if(character_2->pos().x()>1000&&character_2->pos().y()>200&&character_2->pos().y()<340)
+        if (character_2->pos().x() > 1000 && character_2->pos().y() > 200 && character_2->pos().y() < 340)
         {
             character_2->flameItem->setVisible(true);
-            character_2->flame_attacked=true;
+            character_2->flame_attacked = true;
         }
     }
-    if(character->flame_attacked||character_2->flame_attacked)
+    if (character->flame_attacked || character_2->flame_attacked)
     {
-        for(Item* item:total_random_fallthing)
+        for (Item *item : total_random_fallthing)
         {
-            if(auto sword=dynamic_cast<Sword*>(item))
+            if (auto sword = dynamic_cast<Sword *>(item))
             {
-                if(sword->material=="Wooden")                                                           //人物移动点燃周围木制物品
+                if (sword->material == "Wooden")                                                           //人物移动点燃周围木制物品
                 {
-                    if(Collision_detection(sword,character)&&character->flame_attacked)
+                    if (Collision_detection(sword, character) && character->flame_attacked)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
-                    if(Collision_detection(sword,character_2)&&character_2->flame_attacked)
+                    if (Collision_detection(sword, character_2) && character_2->flame_attacked)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
                 }
             }
-            else if(auto sword=dynamic_cast<Bow*>(item))
+            else if (auto sword = dynamic_cast<Bow *>(item))
             {
-                if(sword->material=="Wooden")
+                if (sword->material == "Wooden")
                 {
-                    if(Collision_detection(sword,character)&&character->flame_attacked)
+                    if (Collision_detection(sword, character) && character->flame_attacked)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
-                    if(Collision_detection(sword,character_2)&&character_2->flame_attacked)
+                    if (Collision_detection(sword, character_2) && character_2->flame_attacked)
                     {
-                        sword->flame_attacked=true;
+                        sword->flame_attacked = true;
                         sword->flameItem->setVisible(true);
                     }
                 }
             }
-            (void)dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item *>(item);
 
         }
-        if(Collision_detection(character,character_2)&&character->flame_attacked)
+        if (Collision_detection(character, character_2) && character->flame_attacked)
         {
             character_2->flameItem->setVisible(true);
-            character_2->flame_attacked=true;
+            character_2->flame_attacked = true;
         }
-        if(Collision_detection(character_2,character)&&character_2->flame_attacked)
+        if (Collision_detection(character_2, character) && character_2->flame_attacked)
         {
             character->flameItem->setVisible(true);
-            character->flame_attacked=true;
+            character->flame_attacked = true;
         }
-        if(Collision_detection(character,fireplat)&&character->flame_attacked)
+        static int num_1 = 0;
+        if (Collision_detection(character, fireplat) && character->flame_attacked)
         {
-            fireplat->flame_attacked=true;
+            fireplat->flame_attacked = true;
             fireplat->flameItem->setVisible(true);
+            num_1++;
+            if (num_1 >= 750)
+            {
+                fireplat->platform_life--;
+                if (fireplat->platform_life <= 0)
+                {
+                    fireplat->setPos(-1000, -1000);
+                    fireplat->flame_attacked = false;
+                    fireplat->flameItem->setVisible(false);
+                }
+                num_1 = 0;
+            }
         }
-        if(Collision_detection(character_2,fireplat)&&character_2->flame_attacked)
+        static int num_2 = 0;
+        if (Collision_detection(character_2, fireplat) && character_2->flame_attacked)
         {
-            fireplat->flame_attacked=true;
+            fireplat->flame_attacked = true;
             fireplat->flameItem->setVisible(true);
+            num_2++;
+            if (num_2 >= 750)
+            {
+                fireplat->platform_life--;
+                if (fireplat->platform_life <= 0)
+                {
+                    fireplat->setPos(-1000, -1000);
+                    fireplat->flame_attacked = false;
+                    fireplat->flameItem->setVisible(false);
+                }
+                num_2 = 0;
+            }
         }
-
     }
 }
 
 void BattleScene::elecspread()                                          //金属平台触电时传到至周围金属物品和人物
 {
-    if(iceplat->elec_attacked)
+    if (iceplat->elec_attacked)
     {
-        for(Item* item:total_random_fallthing)
+        for (Item *item : total_random_fallthing)
         {
-            if(auto sword=dynamic_cast<Sword*>(item))
+            if (auto sword = dynamic_cast<Sword *>(item))
             {
-                if(sword->material=="Metal")
+                if (sword->material == "Metal")
                 {
-                    if(sword->pos().x()>240&&sword->pos().x()<450&&sword->pos().y()>250&&sword->pos().y()<400)  //电流传导距离阈值
+                    if (sword->pos().x() > 240 && sword->pos().x() < 450 && sword->pos().y() > 250 && sword->pos().y() < 400)  //电流传导距离阈值
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
                 }
             }
-            else if(auto sword=dynamic_cast<Bow*>(item))
+            else if (auto sword = dynamic_cast<Bow *>(item))
             {
-                if(sword->material=="Metal")
+                if (sword->material == "Metal")
                 {
-                    if(sword->pos().x()>1000&&sword->pos().y()>200&&sword->pos().y()<400)
+                    if (sword->pos().x() > 1000 && sword->pos().y() > 200 && sword->pos().y() < 400)
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
                 }
             }
-            (void)dynamic_cast<Item*>(item);
+            (void)dynamic_cast<Item *>(item);
 
         }
-        if(character->pos().x()>240&&character->pos().x()<450&&character->pos().y()>200&&character->pos().y()<340)          //人物在导电平台附近会受到电击
+        if (character->pos().x() > 240 && character->pos().x() < 450 && character->pos().y() > 200 && character->pos().y() < 340)          //人物在导电平台附近会受到电击
         {
             character->elecItem->setVisible(true);
-            character->elec_attacked=true;
+            character->elec_attacked = true;
         }
-        if(character_2->pos().x()>240&&character_2->pos().x()<450&&character_2->pos().y()>200&&character_2->pos().y()<340)
+        if (character_2->pos().x() > 240 && character_2->pos().x() < 450 && character_2->pos().y() > 200 && character_2->pos().y() < 340)
         {
             character_2->elecItem->setVisible(true);
-            character_2->elec_attacked=true;
+            character_2->elec_attacked = true;
         }
 
     }
-    if(character->elec_attacked||character_2->elec_attacked)                                          //人物被电击后，周围金属物品也会受到电击
+    if (character->elec_attacked || character_2->elec_attacked)                                          //人物被电击后，周围金属物品也会受到电击
     {
-        for(Item* item:total_random_fallthing)
+        for (Item *item : total_random_fallthing)
         {
-            if(auto sword=dynamic_cast<Sword*>(item))
+            if (auto sword = dynamic_cast<Sword *>(item))
             {
-                if(sword->material=="Metal")                                                           //人物移动导致周围金属物品触电
+                if (sword->material == "Metal")                                                           //人物移动导致周围金属物品触电
                 {
-                    if(Collision_detection(character,sword)&&character->elec_attacked)
+                    if (Collision_detection(character, sword) && character->elec_attacked)
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
-                    if(Collision_detection(character_2,sword)&&character_2->elec_attacked)
+                    if (Collision_detection(character_2, sword) && character_2->elec_attacked)
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
                 }
             }
-            else if(auto sword=dynamic_cast<Bow*>(item))
+            else if (auto sword = dynamic_cast<Bow *>(item))
             {
-                if(sword->material=="Metal")
+                if (sword->material == "Metal")
                 {
-                    if(Collision_detection(character,sword)&&character->elec_attacked)
+                    if (Collision_detection(character, sword) && character->elec_attacked)
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
-                    if(Collision_detection(character_2,sword)&&character_2->elec_attacked)
+                    if (Collision_detection(character_2, sword) && character_2->elec_attacked)
                     {
-                        sword->elec_attacked=true;
+                        sword->elec_attacked = true;
                         sword->elecItem->setVisible(true);
                     }
                 }
             }
-            dynamic_cast<Item*>(item);
+            dynamic_cast<Item *>(item);
 
         }
 
-        if(Collision_detection(character,character_2)&&character->elec_attacked)
+        if (Collision_detection(character, character_2) && character->elec_attacked)
         {
             character_2->elecItem->setVisible(true);
-            character_2->elec_attacked=true;
+            character_2->elec_attacked = true;
         }
-        if(Collision_detection(character_2,character)&&character_2->elec_attacked)
+        if (Collision_detection(character_2, character) && character_2->elec_attacked)
         {
             character->elecItem->setVisible(true);
-            character->elec_attacked=true;
+            character->elec_attacked = true;
         }
-        if(Collision_detection(character,iceplat)&&character->elec_attacked)
+        if (Collision_detection(character, iceplat) && character->elec_attacked)
         {
-            iceplat->elec_attacked=true;
+            iceplat->elec_attacked = true;
             iceplat->elecItem->setVisible(true);
         }
-        if(Collision_detection(character_2,iceplat)&&character_2->elec_attacked)
+        if (Collision_detection(character_2, iceplat) && character_2->elec_attacked)
         {
-            iceplat->elec_attacked=true;
+            iceplat->elec_attacked = true;
             iceplat->elecItem->setVisible(true);
         }
 
@@ -1536,7 +1582,7 @@ void BattleScene::elecspread()                                          //金属
 
 bool BattleScene::Collision_detection(Item *a, Item *b)
 {
-    if(abs(a->pos().x()-b->pos().x())<150&&abs(a->pos().y()-b->pos().y())<150) //人物之间的碰撞检测
+    if (abs(a->pos().x() - b->pos().x()) < 150 && abs(a->pos().y() - b->pos().y()) < 150) //人物之间的碰撞检测
     {
         return true;
     }
@@ -1546,187 +1592,181 @@ bool BattleScene::Collision_detection(Item *a, Item *b)
     }
 }
 
-
-bool BattleScene::stop_detection(Item *item, Item* rect, QString text)
-{
-
-}
-
 bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Character *character)
 {
-    if(item->pos().x()>0)
+    if (item->pos().x() > 0)
     {
-        int x=item->pos().x();
-        int y=item->pos().y();
+        int x = item->pos().x();
+        int y = item->pos().y();
 
-        if(item->parentItem()!=character&&item->parentItem()!=character_2)
+        if (item->parentItem() != character && item->parentItem() != character_2)
         {
-            if(x>=0&&x<270)
+            if (x >= 0 && x < 270)
             {
-                if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
                 else
                 {
                     item->fall_v.setY(0);
                 }
-                if(y>map->getFloorHeight()-10)
+                if (y > map->getFloorHeight() - 10)
                 {
-                    item->setPos(x,map->getFloorHeight());
+                    item->setPos(x, map->getFloorHeight());
                 }
             }
-            else if(x>=270&&x<(270+iceplat->boundingRect().width()))
+            else if (x >= 270 && x < (270 + iceplat->boundingRect().width()))
             {
-                if(item->fall_v.y()>=0&&y<(300-30))
+                if (item->fall_v.y() >= 0 && y < (300 - 30))
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
                 else
                 {
                     item->fall_v.setY(0);
-                    if(item->element=="Elec")
+                    if (item->element == "Elec")
                     {
                         iceplat->elecItem->setVisible(true);
-                        iceplat->elec_attacked=true;
+                        iceplat->elec_attacked = true;
                     }
                 }
-                if(y>290)
+                if (y > 290)
                 {
-                    item->setPos(x,300);
+                    item->setPos(x, 300);
                 }
             }
-            else if(x>=(270+iceplat->boundingRect().width())&&x<560)
+            else if (x >= (270 + iceplat->boundingRect().width()) && x < 560)
             {
-                if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
                 else
                 {
                     item->fall_v.setY(0);
                 }
-                if(y>(map->getFloorHeight()-10))
+                if (y > (map->getFloorHeight() - 10))
                 {
-                    item->setPos(x,map->getFloorHeight());
+                    item->setPos(x, map->getFloorHeight());
                 }
             }
-            else if(x>=560&&x<(560+rockplat->boundingRect().width()))
+            else if (x >= 560 && x < (560 + rockplat->boundingRect().width()))
             {
-                if(item->fall_v.y()>=0&&y<(150-30)&&y!=-120)
+                if (item->fall_v.y() >= 0 && y < (150 - 30) && y != -120)
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
-                else if(item->fall_v.y()>0&&y>=120&&y<150)
+                else if (item->fall_v.y() > 0 && y >= 120 && y < 150)
                 {
                     item->fall_v.setY(0);
 
-                    item->setPos(x,150);
-                    if(item->element=="Ice")
+                    item->setPos(x, 150);
+                    if (item->element == "Ice")
                     {
                         rockplat->iceItem->setVisible(true);
-                        rockplat->ice_attacked=true;
+                        rockplat->ice_attacked = true;
                     }
                 }
-                if(y>150)
+                if (y > 150)
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
-                    if(y>map->getFloorHeight())
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
+                    if (y > map->getFloorHeight())
                     {
                         item->fall_v.setX(0);
                         item->fall_v.setY(0);
-                        item->setPos(-120,-120);
+                        item->setPos(-120, -120);
 
                     }
                 }
 
             }
-            else if(x>=(560+rockplat->boundingRect().width())&&x<1000)
+            else if (x >= (560 + rockplat->boundingRect().width()) && x < 1000)
             {
-                if(item->fall_v.y()>=0&&y<(map->getFloorHeight()-20))
+                if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
                 else
                 {
                     item->fall_v.setY(0);
 
                 }
-                if(y>map->getFloorHeight()-10)
+                if (y > map->getFloorHeight() - 10)
                 {
-                    item->setPos(x,map->getFloorHeight());
+                    item->setPos(x, map->getFloorHeight());
                 }
             }
             else
             {
-                if(item->fall_v.y()>=0&&y<(320-30))
+                if (item->fall_v.y() >= 0 && y < (320 - 30))
                 {
-                    item->fall_v.setY(item->fall_v.y()+0.0002);
+                    item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
                 else
                 {
                     item->fall_v.setY(0);
-                    if(item->element=="Flame")
+                    if (item->element == "Flame")
                     {
                         fireplat->flameItem->setVisible(true);
-                        fireplat->flame_attacked=true;
+                        fireplat->flame_attacked = true;
                     }
 
                 }
-                if(y>310)
+                if (y > 310)
                 {
-                    item->setPos(x,320);
+                    item->setPos(x, 320);
                 }
             }
         }
 
-        int distance=QLineF(item->pos(),character->pos()).length();
-        if(distance<100)
+        int distance = QLineF(item->pos(), character->pos()).length();
+        if (distance < 100)
         {
             item->fall_v.setY(0);
-            int elec=item->elec_value-character->protect_elec;
-            int ice=item->ice_value-character->protect_ice;
-            int flame=item->flame_value-character->protect_flame;
-            int sum=elec+ice+flame;
+            int elec = item->elec_value - character->protect_elec;
+            int ice = item->ice_value - character->protect_ice;
+            int flame = item->flame_value - character->protect_flame;
+            int sum = elec + ice + flame;
 
-            if(item->element=="Elec")
+            if (item->element == "Elec")
             {
-                character->elec_attacked=true;
+                character->elec_attacked = true;
                 character->elecItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
-                    character->ice_attacked=false;
+                    sum *= 2;
+                    character->ice_attacked = false;
                     character->iceItem->setVisible(false);
                 }
             }
-            else if(item->element=="Ice")
+            else if (item->element == "Ice")
             {
-                character->ice_attacked=true;
+                character->ice_attacked = true;
                 character->iceItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
+                    sum *= 2;
                 }
             }
-            else if(item->element=="Flame")
+            else if (item->element == "Flame")
             {
-                character->flame_attacked=true;
+                character->flame_attacked = true;
                 character->flameItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
-                    character->ice_attacked=false;
+                    sum *= 2;
+                    character->ice_attacked = false;
                     character->iceItem->setVisible(false);
                 }
             }
 
-            character->lifevalue-=sum;
+            character->lifevalue -= sum;
             character->bloodbar->setValue(character->lifevalue);
         }
-        if(item->fall_v.y()==0&&item->pos().y()>0)
+        if (item->fall_v.y() == 0 && item->pos().y() > 0)
         {
-            item->setPos(-120,-120);
+            item->setPos(-120, -120);
             item->fall_v.setX(0);
         }
     }
@@ -1734,153 +1774,92 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
 
 bool BattleScene::handleshootarrowattack(Arrow *item, Character *character, Character *character_2)
 {
-    if(item->pos().x()>0)
+    double g = 0;;
+    if (item->pos().x() > 0)
     {
-        gravity(item,0.0001);
-
-        int distance=QLineF(item->pos(),character->pos()).length();                     //判断射出的箭是否打到对方，计算伤害并更新生命值
-        if(distance<100)
+        // gravity(item,g);
+        bool flag = false;
+        int distance = QLineF(item->pos(), character->pos()).length();                     //判断射出的箭是否打到对方，计算伤害并更新生命值
+        if (distance < 100)
         {
             item->fall_v.setY(0);
-            int elec=item->elec_value+character_2->bow->elec_value-character->protect_elec;
-            int ice=item->ice_value+character_2->bow->ice_value-character->protect_ice;
-            int flame=item->flame_value+character_2->bow->flame_value-character->protect_flame;
-            int sum=elec+ice+flame;
-            if(item->element=="Elec")                                                   //根据箭头的属性，播放相应的攻击效果
+            flag = true;
+            int elec = item->elec_value + character_2->bow->elec_value - character->protect_elec;
+            int ice = item->ice_value + character_2->bow->ice_value - character->protect_ice;
+            int flame = item->flame_value + character_2->bow->flame_value - character->protect_flame;
+            int sum = elec + ice + flame;
+            if (item->element == "Elec")                                                   //根据箭头的属性，播放相应的攻击效果
             {
-                character->elec_attacked=true;
+                character->elec_attacked = true;
                 character->elecItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
-                    character->ice_attacked=false;
+                    sum *= 2;
+                    character->ice_attacked = false;
                     character->iceItem->setVisible(false);
                 }
             }
-            else if(item->element=="Ice")
+            else if (item->element == "Ice")
             {
-                character->ice_attacked=true;
+                character->ice_attacked = true;
                 character->iceItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
+                    sum *= 2;
 
                 }
             }
-            else if(item->element=="Flame")                                             //冰属性下伤害翻倍，并且立即解除冰冻状态
+            else if (item->element == "Flame")                                             //冰属性下伤害翻倍，并且立即解除冰冻状态
             {
-                character->flame_attacked=true;
+                character->flame_attacked = true;
                 character->flameItem->setVisible(true);
-                if(character->ice_attacked)
+                if (character->ice_attacked)
                 {
-                    sum*=2;
-                    character->ice_attacked=false;
+                    sum *= 2;
+                    character->ice_attacked = false;
                     character->iceItem->setVisible(false);
                 }
             }
 
-            character->lifevalue-=sum;
+            character->lifevalue -= sum;
             character->bloodbar->setValue(character->lifevalue);
 
         }
-        if(item->fall_v.y()==0&&item->pos().y()>0)
+
+        // if(item->fall_v.y()==0&&item->pos().y()>0&&g!=0&&flag)
+        // {
+        //     item->setPos(-120,-120);
+        //     removeItem(item);
+        //     item->fall_v.setX(0);
+        // }
+        // else if(g==0&&flag)
+        // {
+        //     item->setPos(-120,-120);
+        //     removeItem(item);
+        //     item->fall_v.setX(0);
+        // }
+        if (flag)
         {
-            item->setPos(-120,-120);
+            item->setPos(-120, -120);
             removeItem(item);
             item->fall_v.setX(0);
         }
     }
 }
 
-void BattleScene::processPlayerInput(Character* character) {
-    if (!character) return;
+void BattleScene::CharacterAttackAnimation(Character *character)
+{
+    Sword* sword=character->getsword();
 
-    Scene::processInput();
-
-    // Initialize velocity and position
-    QPointF velocity(0, character->getVelocity().y());
-    const qreal x = character->pos().x();
-    const qreal y = character->pos().y();
-    const qreal height = character->boundingRect().height();
-    const qreal width = character->sceneBoundingRect().width();
-
-    // Handle horizontal movement
-    if (character->isLeftDown()) {
-        velocity.setX(-0.3);
-        character->setTransform(QTransform().scale(1, 1));
-    }
-    if (character->isRightDown()) {
-        velocity.setX(0.3);
-        character->setTransform(QTransform().scale(-1, 1));
-    }
-
-    // Handle jumping
-    if (character->isJumpDown() && velocity.y() == 0) {
-        if (character->isonground() && abs(y - map->getFloorHeight()) < 20) {
-            velocity.setY(-0.8);
-        } else {
-            for (PlatForm* platform : platforms) {
-                QRectF platRect = platform->sceneBoundingRect();
-                if (abs(y - platRect.top()) < 20 && x > platRect.left() && x < platRect.right()) {
-                    velocity.setY(-0.8);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Apply gravity
-    if (velocity.y() != 0) {
-        velocity.setY(velocity.y() + 0.02);
-        if (y > map->getFloorHeight()) {
-            velocity.setY(0);
-        }
-    }
-
-    // Platform collision detection
-    for (PlatForm* platform : platforms) {
-        QRectF platRect = platform->sceneBoundingRect();
-        bool isNearPlatform = x > platRect.left() - 5 && x < platRect.right() + 5;
-
-        if (isNearPlatform) {
-            if (y > platRect.bottom() - height) {
-                // Restrict horizontal movement near platform edges
-                if (character->isLeftDown() && x > platRect.right()) {
-                    velocity.setX(0);
-                }
-                if (character->isRightDown() && x < platRect.left()) {
-                    velocity.setX(0);
-                }
-            } else if (velocity.y() > 0 && abs(y - platRect.top()) < 5) {
-                velocity.setY(0); // Stop falling when landing on platform
-            }
-        } else if (abs(y - platRect.top()) < 5 && velocity.y() == 0) {
-            velocity.setY(0.02); // Apply gravity if just above platform
-        }
-    }
-
-    // Boundary checks
-    if (x < 0 && character->isLeftDown()) {
-        character->setPos(0, y);
-    }
-    if (x > 1280 - width && character->isRightDown()) {
-        character->setPos(1280 - width, y);
-    }
-
-    // Update velocity
-    character->setVelocity(velocity);
-
-    // Handle picking
-    character->setPicking(!character->isLastPickDowm() && character->isPickDown());
-    character->setLastPickDown(character->isPickDown());
 }
+
 
 Mountable *BattleScene::findNearestUnmountedMountable(const QPointF &pos, qreal distance_threshold)
 {
     Mountable *nearest = nullptr;
     qreal minDistance = distance_threshold;
 
-    for (QGraphicsItem *item: items())
+    for (QGraphicsItem *item : items())
     {
         if (auto mountable = dynamic_cast<Mountable *>(item))       //判断是否可以拾取
         {

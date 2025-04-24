@@ -19,6 +19,8 @@ public:
     int attackdistance;
     QString element;
     QString name;
+    void SwordAttack();
+    void CompleteSwordAttack();
 };
 
 #endif // SWORD_H

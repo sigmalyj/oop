@@ -1,5 +1,5 @@
 #include "sword.h"
-
+#include<QTransform>
 Sword::Sword(QGraphicsItem *parent, const QString &pixmapPath):Item(parent, pixmapPath) {
 
 }
@@ -12,4 +12,16 @@ void Sword::mountToParent()
     if (pixmapItem != nullptr) {
         pixmapItem->setPos(0, 0);
     }
+}
+
+void Sword::SwordAttack()
+{
+    QTransform transform;
+    transform.translate(100,100).rotate(-45).translate(-100,-100);
+    setTransform(transform);
+}
+
+void Sword::CompleteSwordAttack()
+{
+    setTransform(QTransform().rotate(0));
 }
