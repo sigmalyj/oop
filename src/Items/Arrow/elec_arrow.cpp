@@ -1,7 +1,7 @@
 #include "elec_arrow.h"
 
 Elec_Arrow::Elec_Arrow(QGraphicsItem *parent): Arrow(parent,
-            ":/Items/Arrow/251KH339A.png")
+            ":/Items/Arrow/ElecArrow.png")
 {
     flydistance=700;
     elec_value=3;

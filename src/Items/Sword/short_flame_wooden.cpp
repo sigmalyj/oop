@@ -1,7 +1,7 @@
 #include "short_flame_wooden.h"
 
 Short_Flame_Wooden::Short_Flame_Wooden(QGraphicsItem *parent): Sword(parent,
-            ":/Items/weapon/sword/Short_Flame_Wooden/20141A.gif")
+            ":/Items/weapon/sword/Short_Flame_Wooden/FlameSword.gif")
 {
     attackdistance=50;
     elec_value=3;

@@ -1,7 +1,7 @@
 #include "short_flame_wooden_bow.h"
 
 Short_Flame_Wooden_Bow::Short_Flame_Wooden_Bow(QGraphicsItem *parent) : Bow(parent,
-          ":/Items/weapon/bow/Short_Flame_Wooden/20144.gif")
+          ":/Items/weapon/bow/Short_Flame_Wooden/FlameBow.gif")
 {
     attackdistance=400;
     elec_value=3;

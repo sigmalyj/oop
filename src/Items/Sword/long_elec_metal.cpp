@@ -1,7 +1,7 @@
 #include "long_elec_metal.h"
 
 Long_Elec_Metal::Long_Elec_Metal(QGraphicsItem *parent): Sword(parent,
-            ":/Items/weapon/sword/Long_Elec_Metal/elecsword.gif")
+            ":/Items/weapon/sword/Long_Elec_Metal/ElecSword.gif")
 {
     attackdistance=170;
     elec_value=7;

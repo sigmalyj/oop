@@ -2,7 +2,7 @@
 
 
 Middle_Elec_Metal::Middle_Elec_Metal(QGraphicsItem *parent) : Bow(parent,
-          ":/Items/weapon/bow/Middle_Elec_Metal/26162F311N_2.gif")
+          ":/Items/weapon/bow/Middle_Elec_Metal/ElecBow.gif")
 {
     attackdistance=650;
     elec_value=7;

@@ -7,9 +7,9 @@ Item::Item(QGraphicsItem *parent, const QString &pixmapPath) : QGraphicsItem(par
     }
 
     //初始化攻击效果图片
-    flameItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/795f73dbbdc59760461a53ecea3267f0.gif"), this);
-    iceItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/45da19dce11dd571aa7de2fe54801f02.gif"), this);
-    elecItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/df940ca0d80338fc833ea0f12fabad96.gif"), this);
+    flameItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/FlameAttack.gif"), this);
+    iceItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/IceAttack.gif"), this);
+    elecItem=new QGraphicsPixmapItem(QPixmap(":/Items/attacked/ElecAttack.gif"), this);
     flameItem->setVisible(false);
     iceItem->setVisible(false);
     elecItem->setVisible(false);

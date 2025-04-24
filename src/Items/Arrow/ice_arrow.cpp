@@ -1,7 +1,7 @@
 #include "ice_arrow.h"
 
 Ice_Arrow::Ice_Arrow(QGraphicsItem *parent): Arrow(parent,
-            ":/Items/Arrow/ice.gif")
+            ":/Items/Arrow/IceArrow.gif")
 {
     flydistance=700;
     elec_value=0;

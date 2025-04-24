@@ -1,7 +1,7 @@
 #include "lone_ice_metal.h"
 
 Lone_Ice_Metal::Lone_Ice_Metal(QGraphicsItem *parent) : Bow(parent,
-            ":/Items/weapon/bow/Lone_Ice_Metal/0G5013b243_2.gif")
+            ":/Items/weapon/bow/Lone_Ice_Metal/IceBow.gif")
 {
     elec_value=3;
     flame_value=3;

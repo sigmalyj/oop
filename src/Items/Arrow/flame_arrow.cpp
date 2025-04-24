@@ -2,7 +2,7 @@
 
 
 Flame_Arrow::Flame_Arrow(QGraphicsItem *parent): Arrow(parent,
-            ":/Items/Arrow/flame.gif")
+            ":/Items/Arrow/FlameArrow.gif")
 {
     flydistance=700;
     elec_value=0;

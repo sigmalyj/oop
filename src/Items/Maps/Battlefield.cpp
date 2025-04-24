@@ -1,6 +1,6 @@
 #include "Battlefield.h"
 
-Battlefield::Battlefield(QGraphicsItem *parent) : Map(parent, ":/Items/Maps/Battlefield/FZPW8Lc.png") {}
+Battlefield::Battlefield(QGraphicsItem *parent) : Map(parent, ":/Items/Maps/Battlefield/Battlefield.png") {}
 
 qreal Battlefield::getFloorHeight() {
     auto sceneRect = sceneBoundingRect();
