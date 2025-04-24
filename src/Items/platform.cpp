@@ -14,3 +14,8 @@ void PlatForm::setexist(bool exist)
 {
     exist=exist;
 }
+
+int PlatForm::getplatformlife() const
+{
+    return platform_life;
+}

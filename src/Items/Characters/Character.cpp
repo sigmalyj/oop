@@ -1,4 +1,7 @@
 #include <QTransform>
+#include <QGraphicsScene>
+#include <QGraphicsEllipseItem>
+#include <QGraphicsRectItem>
 #include "Character.h"
 #include"conf.h"
 #include"../Sword/double_ice_metal.h"
@@ -7,10 +10,22 @@
 #include<QPointF>
 Character::Character(QGraphicsItem *parent) : Item(parent, "")
 {
-    //    ellipseItem = new QGraphicsEllipseItem(-5, -5, 10, 10, this);
-    //    // Optionally, set some properties of the ellipse
-    //    ellipseItem->setBrush(Qt::green);          // Fill color
-    //    ellipseItem->setZValue(1);
+}
+
+void Character::visualize(QGraphicsScene *scene) {
+    if (!scene) return;
+
+    // 可视化中心点
+    QPointF center = QPointF(pos().x() + boundingRect().width() / 2, pos().y() + boundingRect().height() / 2);
+    QGraphicsEllipseItem *centerPoint = new QGraphicsEllipseItem(center.x() - 2, center.y() - 2, 4, 4);
+    centerPoint->setBrush(Qt::red);
+    scene->addItem(centerPoint);
+
+    // 可视化边界矩形
+    QGraphicsRectItem *boundingBox = new QGraphicsRectItem(boundingRect());
+    boundingBox->setPen(QPen(Qt::blue));
+    boundingBox->setPos(pos());
+    scene->addItem(boundingBox);
 }
 
 bool Character::isLeftDown() const
