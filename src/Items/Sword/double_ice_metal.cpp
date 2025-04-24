@@ -1,7 +1,7 @@
 #include "double_ice_metal.h"
 
 Double_Ice_Metal::Double_Ice_Metal(QGraphicsItem *parent): Sword(parent,
-            ":/Items/weapon/sword/Double_Ice_Metal/double.png")
+            ":/Items/weapon/sword/Double_Ice_Metal/IceSword.png")
 {
     attackdistance=100;
     elec_value=3;
