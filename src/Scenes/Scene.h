@@ -54,7 +54,8 @@ public:
 protected slots:
 
     virtual void update();
-
+signals:
+    void gameoverSignal(QString text);
 protected:
     qint64 deltaTime{};
 

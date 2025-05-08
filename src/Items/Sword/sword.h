@@ -11,7 +11,7 @@ public:
 
     void mountToParent() override;
 
-    // void unmount() override;
+    void unmount() override;
     int elec_value;
     int ice_value;
     int flame_value;

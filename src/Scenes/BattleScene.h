@@ -79,7 +79,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;      //处理按键摁下事件
 
     void keyReleaseEvent(QKeyEvent *event) override;    //处理按键松开事件
-
+               //游戏结束信号
 
 private:
     //寻找周围可拾取的最近物品

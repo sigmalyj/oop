@@ -13,4 +13,10 @@ void Arrow::mountToParent()
     //     pixmapItem->setPos(0, 0);
     // }
 }
-
+void Arrow::unmount() {                     //设置脱下效果
+    Mountable::unmount();
+    setScale(0.5);
+    if (pixmapItem != nullptr) {
+        pixmapItem->setPos(0, -120);
+    }
+}
