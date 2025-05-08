@@ -11,6 +11,7 @@ void HeadEquipment::mountToParent()
     scale= 0.4;
     this->setZValue(1);
     pixmapItem->setZValue(1);
+    pixmapItem->setPos(0, 0);
 }
 void HeadEquipment::unmount()
 {
@@ -18,7 +19,7 @@ void HeadEquipment::unmount()
     setScale(0.4);
     if (pixmapItem != nullptr)
     {
-        pixmapItem->setPos(0, 0);
+        pixmapItem->setPos(0, -120);
 
     }
 }

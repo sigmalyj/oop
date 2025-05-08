@@ -15,6 +15,13 @@ void Sword::mountToParent()
         pixmapItem->setZValue(4);
     }
 }
+void Sword::unmount() {                     //设置脱下效果
+    Mountable::unmount();
+    setScale(0.5);
+    if (pixmapItem != nullptr) {
+        pixmapItem->setPos(0, -120);
+    }
+}
 
 void Sword::SwordAttack()
 {

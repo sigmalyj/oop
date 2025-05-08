@@ -11,7 +11,7 @@ public:
 
     void mountToParent() override;
 
-    // void unmount() override;
+     void unmount() override;
     int elec_value;             //三种元素的攻击值
     int ice_value;
     int flame_value;

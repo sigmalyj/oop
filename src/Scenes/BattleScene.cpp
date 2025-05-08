@@ -64,9 +64,9 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     character->setPos(map->getSpawnPos());
     character_2->setPos(map->getSpawnPos().x() + 100, map->getSpawnPos().y());
 
-    // 调用可视化方法
-    character->visualize(this);
-    character_2->visualize(this);
+    // // 调用可视化方法
+    // character->visualize(this);
+    // character_2->visualize(this);
 
     QProgressBar *progressBar = new QProgressBar();                                     //添加血条
     progressBar->setRange(0, 200);
@@ -585,7 +585,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     case 1:
     {   Armor *elecbreakerarmor = new ElecBreakerArmor();
         elecbreakerarmor->setPos(x, 0);
-        elecbreakerarmor->setScale(0.2);
+        elecbreakerarmor->setScale(0.4);
         elecbreakerarmor->unmount();
         elecbreakerarmor->fall_v.setY(0);
         elecbreakerarmor->fall_v.setX(0);
@@ -633,7 +633,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     {
         HeadEquipment *elecbreakerhead = new ElecBreakerHead();
         elecbreakerhead->setPos(x, 0);
-        elecbreakerhead->setScale(0.3);
+        elecbreakerhead->setScale(0.4);
         elecbreakerhead->unmount();
         elecbreakerhead->fall_v.setX(0);
         elecbreakerhead->fall_v.setY(0);
@@ -645,7 +645,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     {
         HeadEquipment *icebreakerhead = new IceBreakerHead();
         icebreakerhead->setPos(x, 0);
-        icebreakerhead->setScale(0.3);
+        icebreakerhead->setScale(0.4);
         icebreakerhead->unmount();
         icebreakerhead->fall_v.setX(0);
         icebreakerhead->fall_v.setY(0);
@@ -765,7 +765,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     {
         Arrow *elecarrow = new Elec_Arrow();
         elecarrow->setPos(x, 0);
-        elecarrow->setScale(0.2);
+        elecarrow->setScale(0.4);
         elecarrow->unmount();
         elecarrow->fall_v.setX(0);
         elecarrow->fall_v.setY(0);
@@ -777,7 +777,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     {
         Arrow *icearrow = new Ice_Arrow();
         icearrow->setPos(x, 0);
-        icearrow->setScale(0.2);
+        icearrow->setScale(0.4);
         icearrow->unmount();
         icearrow->fall_v.setX(0);
         icearrow->fall_v.setY(0);
@@ -789,7 +789,7 @@ void BattleScene::fallthing(int x, int num)                               //生�
     {
         Arrow *flamearrow = new Flame_Arrow();
         flamearrow->setPos(x, 0);
-        flamearrow->setScale(0.2);
+        flamearrow->setScale(0.4);
         flamearrow->unmount();
         flamearrow->fall_v.setX(0);
         flamearrow->fall_v.setY(0);
@@ -982,7 +982,7 @@ void BattleScene::gravity(Item *item, qreal g)                                  
             else if (item->fall_v.y() > 0 && y >= 110+140 && y < 150+140)
             {
                 item->fall_v.setY(0);
-                item->setPos(x, 120+140);
+                item->setPos(x, 150+140);
             }
             if (y > 170+140)
             {
@@ -1114,10 +1114,7 @@ void BattleScene::isgameover()                                          //判断
 
 void BattleScene::gameover(QString text)                                //游戏结束弹出提示框，显示某方获胜，并关闭程序
 {
-
-    QMessageBox::critical(nullptr, "Game Over", text);
-    timer->stop();
-    QApplication::quit();
+    emit gameoverSignal(text);
 }
 
 void BattleScene::changearrow()
