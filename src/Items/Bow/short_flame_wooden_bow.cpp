@@ -7,7 +7,7 @@ Short_Flame_Wooden_Bow::Short_Flame_Wooden_Bow(QGraphicsItem *parent) : Bow(pare
     elec_value=3;
     flame_value=6;
     ice_value=3;
-    arrownum=3;
+    arrownum=1;
     material="Wooden";
     element="Flame";
     name="近程避火木弓";

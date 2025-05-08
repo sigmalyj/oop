@@ -11,5 +11,5 @@ Middle_Elec_Metal::Middle_Elec_Metal(QGraphicsItem *parent) : Bow(parent,
     material="Metal";
     element="Elec";
     name="中程雷电铁弓";
-    arrownum=2;
+    arrownum=1;
 }
