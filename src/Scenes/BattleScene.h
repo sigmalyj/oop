@@ -63,8 +63,8 @@ public:
 
     bool stop_detection(Item* item, Item *rect, QString text);         //碰撞检测
 
-    bool handlecastweapon(Sword* item,Character *attacker,Character* opponent); //处理投掷物碰撞
-    bool handleshootarrowattack(Arrow* item,Character *attacker,Character* opponent); //处理射出的箭碰撞
+    void handlecastweapon(Sword* item,Character *attacker,Character* opponent); //处理投掷物碰撞
+    void handleshootarrowattack(Arrow* item,Character *attacker,Character* opponent); //处理射出的箭碰撞
 
     void newgravity(Item* item);              //物品下落函数
 

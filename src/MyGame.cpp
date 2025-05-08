@@ -8,11 +8,8 @@ MyGame::MyGame(QWidget *parent) : QMainWindow(parent)
     // 初始化视图
     gameOverScene=new GameOverScene(this);
     view = new QGraphicsView(this);
-    //view->setScene(battleScene);
-    //connect(gameOverScene, &GameOverScene::gameOver, this, &MyGame::exitGame);
+    connect(gameOverScene, &GameOverScene::gameOver, this, &MyGame::exitGame);
     connect(gameOverScene, &GameOverScene::restart, this, &MyGame::restartGame);
-    //connect(battleScene, &BattleScene::gameoverSignal, this, &MyGame::switchtogameover);
-    //view->setFixedSize((int) view->scene()->width(), (int) view->scene()->height());
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setCentralWidget(view);
@@ -34,6 +31,7 @@ void MyGame::switchToBattleScene()
     view->setScene(battleScene);
     view->setFixedSize((int)battleScene->width(), (int)battleScene->height());
     setFixedSize(view->sizeHint());
+    connect(battleScene, &BattleScene::gameoverSignal, this, &MyGame::switchtogameover);
     battleScene->startLoop();
 
 }

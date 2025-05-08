@@ -96,7 +96,7 @@ void Scene::cast()
 
 void Scene::gravity(Item *, qreal g)
 {
-
+    Q_UNUSED(g);
 }
 
 void Scene::handlecastthing()

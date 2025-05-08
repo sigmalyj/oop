@@ -876,6 +876,7 @@ void BattleScene::cast()
         Character *chara = characters[i];
         if (!chara->ice_attacked && chara->isCastDown() && chara->now_weapon != nullptr)
         {
+
             if (chara->now_weapon == chara->sword) // 当前使用近战武器
             {
                 Sword *castthing = chara->getsword();
@@ -889,6 +890,7 @@ void BattleScene::cast()
             }
             else // 当前使用武器为弓箭
             {
+                qDebug() << "Character" << i << "is shooting arrows.";
                 chara->setattackstate(true);
                 int arrowCount = chara->bow->arrownum;
                 int distance = chara->bow->attackdistance;
@@ -897,6 +899,7 @@ void BattleScene::cast()
                     Arrow *shootedarrow = chara->getshootedarrow();
                     if (shootedarrow != nullptr)
                     {
+                        qDebug() << "Arrow shot at position:" << chara->pos();
                         shootedarrow->setPos(chara->pos().x(), chara->pos().y() - 100);
                         if (chara->isFace()) // 确定人物朝向
                         {
@@ -916,7 +919,6 @@ void BattleScene::cast()
         }
     }
 }
-
 void BattleScene::gravity(Item *item, qreal g)                                    //重力的实现
 {
     int x = item->pos().x();
@@ -1544,7 +1546,7 @@ void BattleScene::elecspread()                                          //金属
                     }
                 }
             }
-            dynamic_cast<Item *>(item);
+            // dynamic_cast<Item *>(item);
 
         }
 
@@ -1584,7 +1586,7 @@ bool BattleScene::Collision_detection(Item *a, Item *b)
     }
 }
 
-bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Character *character)
+void BattleScene::handlecastweapon(Sword *item, Character *character_2, Character *character)
 {
     if (item->pos().x() > 0)
     {
@@ -1764,9 +1766,8 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
     }
 }
 
-bool BattleScene::handleshootarrowattack(Arrow *item, Character *character, Character *character_2)
+void BattleScene::handleshootarrowattack(Arrow *item, Character *character, Character *character_2)
 {
-    double g = 0;;
     if (item->pos().x() > 0)
     {
         // gravity(item,g);

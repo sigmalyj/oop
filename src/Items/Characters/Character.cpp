@@ -9,6 +9,7 @@
 #include"../Sword/long_elec_metal.h"
 #include"../Sword/short_flame_wooden.h"
 #include<QPointF>
+#include <QDebug>
 Character::Character(QGraphicsItem *parent) : Item(parent, "")
 {
 }
@@ -301,7 +302,6 @@ void Character::charactercast()                                                 
     if(sword!=NULL)
     {
         sword->unmount();                                                       //卸下被投掷武器
-
         sword->setParentItem(parentItem());
         sword=NULL;
         now_weapon=bow;                                                         //将当前武器设为弓
@@ -313,7 +313,6 @@ void Character::charactercast()                                                 
         {
             nameofnow_weapon=bow->name;                                         //更改当前武器的名字
         }
-
     }
 }
 

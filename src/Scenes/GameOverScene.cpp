@@ -6,7 +6,7 @@
 
 GameOverScene::GameOverScene(QObject *parent)
 {
-
+    Q_UNUSED(parent);
     setSceneRect(0, 0, 1280, 720);
     QPixmap pixmap(":/Items/Maps/Battlefield/Arena.png");
     QPixmap scaledPixmap = pixmap.scaled(sceneRect().width(), sceneRect().height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);

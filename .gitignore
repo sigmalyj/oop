@@ -2,4 +2,4 @@ build/
 bin/
 CMakeLists.txt.user
 .DS_Store
-qthomework.pro.user
+qthomework.pro.user*
