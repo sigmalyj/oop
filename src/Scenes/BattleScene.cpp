@@ -44,11 +44,11 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     characters[1] = character_2;
 
     iceplat = new IcePlat();
-    iceplat->setPos(270, 300);
+    iceplat->setPos(270, 300+140);
     fireplat = new FirePlat();
-    fireplat->setPos(1000, 320);
+    fireplat->setPos(1000, 320+140);
     rockplat = new RockPlat();
-    rockplat->setPos(560, 150);
+    rockplat->setPos(560, 150+140);
 
     platforms[0] = iceplat;
     platforms[1] = fireplat;
@@ -932,6 +932,7 @@ void BattleScene::gravity(Item *item, qreal g)                                  
             }
             else
             {
+                item->setPos(x, map->getFloorHeight());
                 item->fall_v.setY(0);
             }
             if (y > map->getFloorHeight() - 10)
@@ -941,17 +942,18 @@ void BattleScene::gravity(Item *item, qreal g)                                  
         }
         else if (x >= 270 && x < (270 + iceplat->boundingRect().width()))
         {
-            if (item->fall_v.y() >= 0 && y < (300 - 30))
+            if (item->fall_v.y() >= 0 && y < (300+140 - 30))
             {
                 item->fall_v.setY(item->fall_v.y() + g);
             }
             else
             {
                 item->fall_v.setY(0);
+                item->setPos(x, 300+140);
             }
-            if (y > 290)
+            if (y > 290+140)
             {
-                item->setPos(x, 300);
+                item->setPos(x, 300+140);
             }
         }
         else if (x >= (270 + iceplat->boundingRect().width()) && x < 560)
@@ -963,6 +965,8 @@ void BattleScene::gravity(Item *item, qreal g)                                  
             else
             {
                 item->fall_v.setY(0);
+                item->setPos(x, map->getFloorHeight());
+
             }
             if (y > (map->getFloorHeight() - 10))
             {
@@ -971,16 +975,16 @@ void BattleScene::gravity(Item *item, qreal g)                                  
         }
         else if (x >= 560 && x < (560 + rockplat->boundingRect().width()))
         {
-            if (item->fall_v.y() >= 0 && y < (110) && y != -120)
+            if (item->fall_v.y() >= 0 && y < (110+140) && y != -120+140)
             {
                 item->fall_v.setY(item->fall_v.y() + g);
             }
-            else if (item->fall_v.y() > 0 && y >= 110 && y < 150)
+            else if (item->fall_v.y() > 0 && y >= 110+140 && y < 150+140)
             {
                 item->fall_v.setY(0);
-                item->setPos(x, 120);
+                item->setPos(x, 120+140);
             }
-            if (y > 170)
+            if (y > 170+140)
             {
                 item->fall_v.setY(item->fall_v.y() + g);
                 if (y > map->getFloorHeight())
@@ -1001,6 +1005,8 @@ void BattleScene::gravity(Item *item, qreal g)                                  
             else
             {
                 item->fall_v.setY(0);
+                item->setPos(x, map->getFloorHeight());
+
             }
             if (y > map->getFloorHeight() - 10)
             {
@@ -1018,6 +1024,8 @@ void BattleScene::gravity(Item *item, qreal g)                                  
                 else
                 {
                     item->fall_v.setY(0);
+                    item->setPos(x, map->getFloorHeight());
+
                 }
                 if (y > map->getFloorHeight() - 10)
                 {
@@ -1026,17 +1034,19 @@ void BattleScene::gravity(Item *item, qreal g)                                  
             }
             else
             {
-                if (item->fall_v.y() >= 0 && y < (320 - 30))
+                if (item->fall_v.y() >= 0 && y < (320+140 - 30))
                 {
                     item->fall_v.setY(item->fall_v.y() + g);
                 }
                 else
                 {
                     item->fall_v.setY(0);
+                    item->setPos(x, 320+140);
+
                 }
-                if (y > 310)
+                if (y > 310+140)
                 {
-                    item->setPos(x, 320);
+                    item->setPos(x, 320+140);
                 }
             }
 
@@ -1048,6 +1058,7 @@ void BattleScene::gravity(Item *item, qreal g)                                  
     }
 
 }
+
 void BattleScene::handlecastthing()
 {
     for (Sword *item : totalcasting)                                               //人物一所投掷的近战武器，位置更新和伤害判定
@@ -1602,7 +1613,7 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
             }
             else if (x >= 270 && x < (270 + iceplat->boundingRect().width()))
             {
-                if (item->fall_v.y() >= 0 && y < (300 - 30))
+                if (item->fall_v.y() >= 0 && y < (300+140 - 30))
                 {
                     item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
@@ -1615,9 +1626,9 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
                         iceplat->elec_attacked = true;
                     }
                 }
-                if (y > 290)
+                if (y > 290+140)
                 {
-                    item->setPos(x, 300);
+                    item->setPos(x, 300+140);
                 }
             }
             else if (x >= (270 + iceplat->boundingRect().width()) && x < 560)
@@ -1637,22 +1648,22 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
             }
             else if (x >= 560 && x < (560 + rockplat->boundingRect().width()))
             {
-                if (item->fall_v.y() >= 0 && y < (150 - 30) && y != -120)
+                if (item->fall_v.y() >= 0 && y < (150+140 - 30) && y != -120+140)
                 {
                     item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
-                else if (item->fall_v.y() > 0 && y >= 120 && y < 150)
+                else if (item->fall_v.y() > 0 && y >= 120+140 && y < 150+140)
                 {
                     item->fall_v.setY(0);
 
-                    item->setPos(x, 150);
+                    item->setPos(x, 150+140);
                     if (item->element == "Ice")
                     {
                         rockplat->iceItem->setVisible(true);
                         rockplat->ice_attacked = true;
                     }
                 }
-                if (y > 150)
+                if (y > 150+140)
                 {
                     item->fall_v.setY(item->fall_v.y() + 0.0002);
                     if (y > map->getFloorHeight())
@@ -1683,7 +1694,7 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
             }
             else
             {
-                if (item->fall_v.y() >= 0 && y < (320 - 30))
+                if (item->fall_v.y() >= 0 && y < (320 - 30+140))
                 {
                     item->fall_v.setY(item->fall_v.y() + 0.0002);
                 }
@@ -1697,9 +1708,9 @@ bool BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
                     }
 
                 }
-                if (y > 310)
+                if (y > 310+140)
                 {
-                    item->setPos(x, 320);
+                    item->setPos(x, 320+140);
                 }
             }
         }
