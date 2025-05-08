@@ -28,5 +28,6 @@
         <file>Items/attacked/FlameAttack.gif</file>
         <file>Items/attacked/ElecAttack.gif</file>
         <file>Items/Maps/Battlefield/Arena.png</file>
+        <file>Items/Maps/StartScene/StartScene.jpg</file>
     </qresource>
 </RCC>
