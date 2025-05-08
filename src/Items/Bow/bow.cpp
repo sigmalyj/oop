@@ -11,5 +11,7 @@ void Bow::mountToParent()
     setPos(-59, -177);
     if (pixmapItem != nullptr) {
         pixmapItem->setPos(0, 0);
+        this->setZValue(5);
+        pixmapItem->setZValue(5);
     }
 }

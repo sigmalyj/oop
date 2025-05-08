@@ -16,16 +16,13 @@ Character::Character(QGraphicsItem *parent) : Item(parent, "")
 void Character::visualize(QGraphicsScene *scene) {
     if (!scene) return;
 
-    // 可视化中心点
-    QPointF center = QPointF(pos().x() + boundingRect().width() / 2, pos().y() + boundingRect().height() / 2);
-    QGraphicsEllipseItem *centerPoint = new QGraphicsEllipseItem(center.x() - 2, center.y() - 2, 4, 4);
-    centerPoint->setBrush(Qt::red);
-    scene->addItem(centerPoint);
-
+    QPointF center_head =QPointF(pos().x()-59 , pos().y()-177 );
+    QGraphicsEllipseItem *centerPoint_head = new QGraphicsEllipseItem(center_head.x() - 2, center_head.y() - 2, 4, 4);
+    centerPoint_head->setBrush(Qt::red);
+    scene->addItem(centerPoint_head);
     // 可视化边界矩形
-    QGraphicsRectItem *boundingBox = new QGraphicsRectItem(boundingRect());
+    QGraphicsRectItem *boundingBox = new QGraphicsRectItem(center_head.x(),center_head.y(),armor->boundingRect().width()*armor->scale,armor->boundingRect().height()*armor->scale);
     boundingBox->setPen(QPen(Qt::blue));
-    boundingBox->setPos(pos());
     scene->addItem(boundingBox);
 }
 
@@ -52,7 +49,7 @@ void Character::beAttacked()
     if(bow)
         bow->setGraphicsEffect(createRedEffect());
 
-
+    isAttacked=true; // 设置被攻击状态
 }
 void Character::notBeAttacked()
 {
@@ -66,8 +63,15 @@ void Character::notBeAttacked()
         sword->setGraphicsEffect(nullptr);
     if(bow)
         bow->setGraphicsEffect(nullptr);
+    isAttacked=false; // 取消被攻击状态
 
+}
 
+QGraphicsRectItem *Character::GetBoundingBox(QPointF &point)
+{
+    QPointF center_head =QPointF(pos().x()-59 , pos().y()-177 );
+    QGraphicsRectItem *boundingBox = new QGraphicsRectItem(center_head.x(),center_head.y(),armor->boundingRect().width()*armor->scale,armor->boundingRect().height()*armor->scale);
+    return boundingBox;
 }
 
 bool Character::isLeftDown() const
@@ -205,7 +209,7 @@ void Character::characterattack(Character *other)
     {
         return;
     }
-    if(auto weapon=dynamic_cast<Sword*>(now_weapon))                                                //当前武器为箭
+    if(auto weapon=dynamic_cast<Sword*>(now_weapon))                                                //当前武器为剑
     {
         QPointF attack(pos().x()+boundingRect().width()/2,pos().y()+boundingRect().height()/2);
         QPointF attacked(other->pos().x()+other->boundingRect().width()/2,other->pos().y()+other->boundingRect().height()/2);
@@ -218,6 +222,7 @@ void Character::characterattack(Character *other)
                 int ice=(swordweapon->ice_value-other->protect_ice);
                 int flame=(swordweapon->flame_value-other->protect_flame);                          //三种元素攻击伤害
                 int sum=elec+ice+flame;
+                other->isAttacked=true;
                 if(other->ice_attacked)
                 {
                     sum*=2;                                                                         //被冰冻时伤害翻倍
@@ -239,7 +244,7 @@ void Character::characterattack(Character *other)
                     int elec=(weapon->elec_value-other->protect_elec);
                     int ice=(weapon->ice_value-other->protect_ice);
                     int flame=(weapon->flame_value-other->protect_flame);
-
+                    other->isAttacked=true;
                     if(dynamic_cast<Long_Elec_Metal*>(now_weapon))                                  //判断元素属性以播放不同的攻击效果，确定是否被冰冻，如被冰冻则被攻击立即解除
                     {
                         other->elec_attacked=true;

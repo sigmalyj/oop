@@ -3,7 +3,7 @@
 Short_Flame_Wooden::Short_Flame_Wooden(QGraphicsItem *parent): Sword(parent,
             ":/Items/weapon/sword/Short_Flame_Wooden/FlameSword.gif")
 {
-    attackdistance=50;
+    attackdistance=90;
     elec_value=3;
     flame_value=6;
     ice_value=3;

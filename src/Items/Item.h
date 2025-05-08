@@ -25,6 +25,7 @@ public:
     }
     bool setonground(bool isonground);
     void setfall_v(QPointF fallv);
+    QGraphicsRectItem* getboundingbox(QPointF &point);
 
     QPointF fall_v;
     QPointF x_speed;                //物体的速度
@@ -36,6 +37,8 @@ public:
     bool ice_attacked{};
     bool elec_attacked{};
     bool isonground{};               //是否在地面上
+    double scale=0;
+    QGraphicsRectItem *boundingBox{}; //可视化边界矩形
 
 protected:
     QGraphicsPixmapItem *pixmapItem{};      //贴图

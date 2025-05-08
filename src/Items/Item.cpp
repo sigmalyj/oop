@@ -34,3 +34,10 @@ void Item::setfall_v(QPointF fallv)
 {
     fall_v=fallv;
 }
+
+QGraphicsRectItem *Item::getboundingbox(QPointF &point)
+{
+    boundingBox=new QGraphicsRectItem(point.x(),point.y(),boundingRect().width()*scale,boundingRect().height()*scale);
+    boundingBox->setPen(QPen(Qt::blue));
+    return boundingBox;
+}

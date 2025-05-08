@@ -11,6 +11,8 @@ void Sword::mountToParent()
     setPos(-90, -160);
     if (pixmapItem != nullptr) {
         pixmapItem->setPos(0, 0);
+        this->setZValue(4);
+        pixmapItem->setZValue(4);
     }
 }
 

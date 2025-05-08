@@ -42,6 +42,7 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
     character_2->opponent = character;
     characters[0] = character;
     characters[1] = character_2;
+
     iceplat = new IcePlat();
     iceplat->setPos(270, 300);
     fireplat = new FirePlat();
@@ -1126,7 +1127,6 @@ void BattleScene::attackanimation()                                     //判断
     {
         if(character->isattack()&&character->now_weapon!=NULL)
         {
-            character->opponent->beAttacked();
 
             static int num=0;
             num++;
@@ -1139,12 +1139,24 @@ void BattleScene::attackanimation()                                     //判断
                 if(sword!=nullptr)
                 {
                     sword->CompleteSwordAttack();
-                    character->opponent->notBeAttacked();
+
 
                 }
 
             }
         }
+        if(character->opponent->isAttacked)
+        {
+            character->opponent->beAttacked();
+            static int num = 0;
+            num++;
+            if(num>15)
+            {
+                character->opponent->notBeAttacked();
+                num=0;
+            }
+        }
+
     }
 
     for (QGraphicsItem *item : items())                                                     //处理其他所有物品的受击效果

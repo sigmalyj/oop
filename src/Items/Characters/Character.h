@@ -118,6 +118,7 @@ public:
     void beAttacked();                                               //被攻击，设置受击状态
     void notBeAttacked();                                           //取消受击状态
 
+    QGraphicsRectItem* GetBoundingBox(QPointF &point);       //获取角色的边界矩形
 
     Item *now_weapon{};                     //当前所使用武器
     Sword* sword{};                         //所拥有的近战武器
@@ -129,7 +130,7 @@ public:
     int protect_elec=0;
     int protect_ice=0;
     Character *opponent{};
-
+    bool isAttacked=false;
 protected:
 
     HeadEquipment *headEquipment{};         //防具
@@ -157,6 +158,7 @@ private:
     bool changearrow{};
     bool attackstate{};
     bool onground=true;
+
 };
 
 

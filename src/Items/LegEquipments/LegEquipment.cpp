@@ -7,6 +7,9 @@ void LegEquipment::mountToParent() {
     Mountable::mountToParent();
     setScale(0.8);
     setPos(-60, -110);
+    scale = 0.8;
+    this->setZValue(3);
+    pixmapItem->setZValue(3);
 }
 
 void LegEquipment::unmount()
@@ -16,5 +19,6 @@ void LegEquipment::unmount()
     if (pixmapItem != nullptr)
     {
         pixmapItem->setPos(0, 0);
+
     }
 }

@@ -17,6 +17,7 @@ public:
     int pro_ice;
     int pro_flame;
     QString name;
+
 };
 
 
