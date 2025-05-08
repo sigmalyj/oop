@@ -4,7 +4,8 @@
 #include <QGraphicsView>
 #include <QMainWindow>
 #include "Scenes/Scene.h"
-#include "Scenes/GameOverScene.h"#include "Scenes/StartScene.h"
+#include "Scenes/GameOverScene.h"
+#include "Scenes/StartScene.h"
 
 class MyGame : public QMainWindow {
 Q_OBJECT
