@@ -888,6 +888,7 @@ void BattleScene::cast()
                     chara->charactercast();
                 }
             }
+
             else // 当前使用武器为弓箭
             {
                 qDebug() << "Character" << i << "is shooting arrows.";

@@ -214,10 +214,15 @@ void Character::characterattack(Character *other)
     {
         QPointF attack(pos().x()+boundingRect().width()/2,pos().y()+boundingRect().height()/2);
         QPointF attacked(other->pos().x()+other->boundingRect().width()/2,other->pos().y()+other->boundingRect().height()/2);
-        auto distance=QLineF(attack,attacked).length();                                            //判断是否在攻击范围内
+        auto distance=QLineF(attack,attacked).length();
+        QPointF attacker= QPointF(pos().x()-59 , pos().y()-177 );
+        QPointF attacked2=QPointF(other->pos().x()-59 , other->pos().y()-177 );
+        QGraphicsRectItem *boundingBox = new QGraphicsRectItem(attacker.x(),attacker.y(),armor->boundingRect().width()*armor->scale,armor->boundingRect().height()*armor->scale);
+        QGraphicsRectItem *boundingBox2 = new QGraphicsRectItem(attacked2.x(),attacked2.y(),armor->boundingRect().width()*armor->scale,armor->boundingRect().height()*armor->scale);
+        bool isColliding = boundingBox->collidesWithItem(boundingBox2); //判断是否碰撞
         if(auto swordweapon=dynamic_cast<Double_Ice_Metal*>(weapon))                                //武器为双手刀
         {
-            if(distance<swordweapon->attackdistance)
+            if(isColliding)
             {
                 int elec=(swordweapon->elec_value-other->protect_elec);
                 int ice=(swordweapon->ice_value-other->protect_ice);
@@ -240,7 +245,7 @@ void Character::characterattack(Character *other)
         {
             if((face==false&&pos().x()>other->pos().x())||(face==true&&pos().x()<other->pos().x())) //当前武器为单向剑
             {
-                if(distance<weapon->attackdistance)                                                 //判断攻击距离
+                if(isColliding)                                                 //判断攻击距离
                 {
                     int elec=(weapon->elec_value-other->protect_elec);
                     int ice=(weapon->ice_value-other->protect_ice);
@@ -461,7 +466,7 @@ void Character::pickupArrow(Arrow *newArrow)                                    
 
             repos[i]->setParentItem(this);
             repos[i]->mountToParent();
-            repos[i]->setPos(10*i-80,-250);
+            repos[i]->setPos(-30,-120);
             now_arrow=repos[i];
             nameofnow_arrow=repos[i]->name;
             break;
