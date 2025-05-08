@@ -4,14 +4,14 @@
         <file>Items/Armors/FlamebreakerArmor/FlameArmor.png</file>
         <file>Items/HeadEquipments/CapOfTheHero/DefaultHelmet.png</file>
         <file>Items/LegEquipments/WellWornTrousers/DefaultPants.png</file>
-        <file>Items/plat/FirePlat.png</file>
+        <file>Items/plat/WoodPlat.jpg</file>
         <file>Items/plat/MetalPlat.png</file>
-        <file>Items/plat/RockPlat.png</file>
-        <file>Items/Armors/IcebreakerArmor/IceArmor.gif</file>
-        <file>Items/Armors/ElecbreakerArmor/ElecArmor.gif</file>
+        <file>Items/plat/RockPlat.jpg</file>
+        <file>Items/Armors/IcebreakerArmor/IceArmor.png</file>
+        <file>Items/Armors/ElecbreakerArmor/ElecArmor.png</file>
         <file>Items/HeadEquipments/ElecBreakerHead/ElecHelmet.png</file>
-        <file>Items/HeadEquipments/FlameBreakerHead/FlameHelmet.gif</file>
-        <file>Items/HeadEquipments/IceBreakerHead/IceHelmet.gif</file>
+        <file>Items/HeadEquipments/FlameBreakerHead/FlameHelmet.png</file>
+        <file>Items/HeadEquipments/IceBreakerHead/IceHelmet.png</file>
         <file>Items/LegEquipments/ElecBreakerTrou/ElecPants.png</file>
         <file>Items/LegEquipments/IceBreakerTrou/IcePants.png</file>
         <file>Items/LegEquipments/FlameBreakerTrou/FlamePants.png</file>
@@ -27,6 +27,6 @@
         <file>Items/attacked/IceAttack.gif</file>
         <file>Items/attacked/FlameAttack.gif</file>
         <file>Items/attacked/ElecAttack.gif</file>
-        <file>Items/Maps/Battlefield/Battlefield.png</file>
+        <file>Items/Maps/Battlefield/Arena.png</file>
     </qresource>
 </RCC>
