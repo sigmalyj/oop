@@ -29,5 +29,6 @@
         <file>Items/attacked/ElecAttack.gif</file>
         <file>Items/Maps/Battlefield/Arena.png</file>
         <file>Items/Maps/StartScene/StartScene.jpg</file>
+        <file>Items/Maps/HelpScene/HelpScene.png</file>
     </qresource>
 </RCC>
