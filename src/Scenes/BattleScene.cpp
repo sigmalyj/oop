@@ -862,7 +862,7 @@ void BattleScene::cast()
 {
     static int num = 0; // 设置有效投掷间隔
     num++;
-    if (num < 50)
+    if (num < 30)
     {
         return;
     }
@@ -1141,17 +1141,19 @@ void BattleScene::attackanimation()                                     //判断
 
             static int num=0;
             num++;
-            CharacterAttackAnimation(character);
+            if(character->now_weapon==character->sword)
+            {
+                CharacterAttackAnimation(character);
+            }
+
             if(num>15)
             {
                 num=0;
                 Sword* sword =character->getsword();
                 character->setattackstate(false);
-                if(sword!=nullptr)
+                if(sword!=nullptr&&character->now_weapon==character->sword)
                 {
                     sword->CompleteSwordAttack();
-
-
                 }
 
             }
