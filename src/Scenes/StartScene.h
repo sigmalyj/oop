@@ -13,9 +13,11 @@ public:
 
 signals:
     void startButtonClicked();
+    void helpButtonClicked(); // 新增 Help 按钮信号
 
 private:
     QPushButton *startButton;
+    QPushButton *helpButton; // 新增 Help 按钮
 };
 
 #endif // STARTSCENE_H

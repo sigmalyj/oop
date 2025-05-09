@@ -6,6 +6,7 @@
 #include "Scenes/Scene.h"
 #include "Scenes/GameOverScene.h"
 #include "Scenes/StartScene.h"
+#include "Scenes/HelpScene.h"
 
 class MyGame : public QMainWindow {
 Q_OBJECT
@@ -13,8 +14,9 @@ Q_OBJECT
 public:
     explicit MyGame(QWidget *parent = nullptr);
     void switchToBattleScene(); // 切换到战斗场景
-
     void switchtobattle();
+    void switchToStartScene(); // 切换到开始场景
+    void switchToHelpScene();
 public slots:
     void restartGame();
     void exitGame();
@@ -23,6 +25,7 @@ private:
     Scene *battleScene;
     GameOverScene *gameOverScene;
     StartScene *startScene;
+    HelpScene *helpScene;
     QGraphicsView *view;
 };
 

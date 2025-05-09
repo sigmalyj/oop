@@ -2,34 +2,65 @@
 #include <QGraphicsProxyWidget>
 #include <QBrush>
 #include <QPixmap>
-#include <QDebug>
 #include <QFont>
 
 StartScene::StartScene(QObject *parent) : Scene(parent)
 {
     // 加载背景图片
     QPixmap pixmap(":/Items/Maps/StartScene/StartScene.jpg");
-
-    // 设置背景图片和场景大小为 1280x720
     setBackgroundBrush(QBrush(pixmap.scaled(1280, 720, Qt::KeepAspectRatioByExpanding)));
     setSceneRect(0, 0, 1280, 720);
 
     // 创建 Start 按钮
     startButton = new QPushButton("Start");
-    startButton->setFixedSize(300, 120); // 增大按钮大小
-    QFont font("Helvetica [Cronyx]", 40, QFont::StyleItalic, true); // 设置艺术字体
+    startButton->setFixedSize(300, 120);
+    QFont font("Algerian", 40, QFont::Bold, true);
     startButton->setFont(font);
 
-    // 设置按钮样式表，增加颜色和阴影效果
+    // 设置 Start 按钮样式表
     startButton->setStyleSheet(
-        "background-color: transparent;color: white;" // 背景透明
+        "QPushButton {"
+        "    background-color: transparent;"
+        "    color: white;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: rgba(255, 255, 255, 50); /* 浅透明蒙版 */"
+        "    color: black;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: rgba(255, 255, 255, 100); /* 更深的透明蒙版 */"
+        "    color: gray;"
+        "}"
     );
 
-    QGraphicsProxyWidget *proxy = addWidget(startButton);
+    QGraphicsProxyWidget *startProxy = addWidget(startButton);
+    startProxy->setPos(1280 - startButton->width() - 100, (720 - startButton->height()) / 3);
 
-    // 设置按钮位置
-    proxy->setPos((1280 - startButton->width()) -200, (720 - startButton->height()) / 2); // 居中按钮
-
-    // 连接按钮点击信号
     connect(startButton, &QPushButton::clicked, this, &StartScene::startButtonClicked);
+
+    // 创建 Help 按钮
+    helpButton = new QPushButton("Help");
+    helpButton->setFixedSize(300, 120);
+    helpButton->setFont(font);
+
+    // 设置 Help 按钮样式表
+    helpButton->setStyleSheet(
+        "QPushButton {"
+        "    background-color: transparent;"
+        "    color: white;"
+        "}"
+        "QPushButton:hover {"
+        "    background-color: rgba(255, 255, 255, 50); /* 浅透明蒙版 */"
+        "    color: black;"
+        "}"
+        "QPushButton:pressed {"
+        "    background-color: rgba(255, 255, 255, 100); /* 更深的透明蒙版 */"
+        "    color: gray;"
+        "}"
+    );
+
+    QGraphicsProxyWidget *helpProxy = addWidget(helpButton);
+    helpProxy->setPos(1280 - helpButton->width() - 100, (720 - helpButton->height()) * 2 / 3);
+
+    connect(helpButton, &QPushButton::clicked, this, &StartScene::helpButtonClicked);
 }

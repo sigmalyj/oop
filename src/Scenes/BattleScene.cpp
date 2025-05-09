@@ -153,20 +153,20 @@ void BattleScene::keyPressEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_J:
-        if (character != nullptr) {
-            character->setPickDown(true);
-        }
-        break;
+        if (character != nullptr)
+        {
+            character->setAttackDown(true);
+        }break;
     case Qt::Key_K:
         if (character != nullptr)
         {
             character->setJumpDown(true);
         }break;
     case Qt::Key_Space:
-        if (character != nullptr)
-        {
-            character->setAttackDown(true);
-        }break;
+        if (character != nullptr) {
+            character->setPickDown(true);
+        }
+        break;
     case Qt::Key_Q:
         if (character != nullptr)
         {
@@ -245,10 +245,10 @@ void BattleScene::keyReleaseEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_J:
-        if (character != nullptr) {
-            character->setPickDown(false);
-        }
-        break;
+        if (character != nullptr)
+        {
+            character->setAttackDown(false);
+        }break;
     case Qt::Key_K:
         if (character != nullptr)
         {
@@ -256,10 +256,10 @@ void BattleScene::keyReleaseEvent(QKeyEvent *event)
         }
         break;
     case Qt::Key_Space:
-        if (character != nullptr)
-        {
-            character->setAttackDown(false);
-        }break;
+        if (character != nullptr) {
+            character->setPickDown(false);
+        }
+        break;
     case Qt::Key_Q:
         if (character != nullptr)
         {

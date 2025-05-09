@@ -21,6 +21,7 @@ HEADERS += src/MyGame.h \
            src/Items/platform.h \
            src/Scenes/BattleScene.h \
            src/Scenes/GameOverScene.h \
+           src/Scenes/HelpScene.h \
            src/Scenes/StartScene.h \
            src/Scenes/cheatline.h \
            src/Scenes/fireplat.h \
@@ -66,6 +67,7 @@ SOURCES += src/main.cpp \
            src/Items/platform.cpp \
            src/Scenes/BattleScene.cpp \
            src/Scenes/GameOverScene.cpp \
+           src/Scenes/HelpScene.cpp \
            src/Scenes/StartScene.cpp \
            src/Scenes/cheatline.cpp \
            src/Scenes/fireplat.cpp \
