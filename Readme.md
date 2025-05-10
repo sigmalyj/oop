@@ -1,6 +1,6 @@
 # ZELDA：THE FINAL BATTLE
 
-## ![image-20250510142534945](C:\Users\wty\AppData\Roaming\Typora\typora-user-images\image-20250510142534945.png)
+## ![开始界面](src\assets\Items\Maps\StartScene\StartScene.jpg)
 
 ## 开发者及分工：
 
