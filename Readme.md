@@ -1,6 +1,6 @@
 # ZELDA：THE FINAL BATTLE
 
-## ![开始界面](src\assets\Items\Maps\StartScene\StartScene.jpg)
+## ![开始界面](src/assets/Items/Maps/StartScene/StartScene.jpg)
 
 ## 开发者及分工：
 
