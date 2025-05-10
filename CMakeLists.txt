@@ -28,8 +28,11 @@ set(HEADERS
     src/Items/Mountable.h
     src/Items/platform.h
     src/Scenes/BattleScene.h
+    src/Scenes/StartScene.h
+    src/Scenes/HelpScene.h
+    src/Scenes/GameOverScene.h
     src/Scenes/cheatline.h
-    src/Scenes/fireplat.h
+    src/Scenes/woodplat.h
     src/Scenes/iceplat.h
     src/Scenes/rockplat.h
     src/Scenes/Scene.h
@@ -75,8 +78,11 @@ set(SOURCES
     src/Items/Mountable.cpp
     src/Items/platform.cpp
     src/Scenes/BattleScene.cpp
+    src/Scenes/StartScene.cpp
+    src/Scenes/HelpScene.cpp
+    src/Scenes/GameOverScene.cpp
     src/Scenes/cheatline.cpp
-    src/Scenes/fireplat.cpp
+    src/Scenes/woodplat.cpp
     src/Scenes/iceplat.cpp
     src/Scenes/rockplat.cpp
     src/Scenes/Scene.cpp

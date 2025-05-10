@@ -11,7 +11,7 @@
 #include"../Items/LegEquipments/flamebreakertrou.h"
 #include"../Items/LegEquipments/icebreakertrou.h"
 #include"iceplat.h"
-#include"fireplat.h"
+#include"woodplat.h"
 #include"rockplat.h"
 #include"../Items/Sword/double_ice_metal.h"
 #include"../Items/Sword/short_flame_wooden.h"
@@ -45,20 +45,20 @@ BattleScene::BattleScene(QObject *parent) : Scene(parent)
 
     iceplat = new IcePlat();
     iceplat->setPos(270, 300+140);
-    fireplat = new FirePlat();
-    fireplat->setPos(1000, 320+140);
+    woodplat = new FirePlat();
+    woodplat->setPos(1000, 320+140);
     rockplat = new RockPlat();
     rockplat->setPos(560, 150+140);
 
     platforms[0] = iceplat;
-    platforms[1] = fireplat;
+    platforms[1] = woodplat;
     platforms[2] = rockplat;
 
     addItem(map);
     addItem(character);
     addItem(character_2);
     addItem(iceplat);
-    addItem(fireplat);
+    addItem(woodplat);
     addItem(rockplat);
     map->scaleToFitScene(this);
     character->setPos(map->getSpawnPos());
@@ -391,7 +391,7 @@ void BattleScene::HeroInPut(Character *character)                        //人�
     Scene::processInput();
 
     QRectF iceRec = iceplat->sceneBoundingRect();
-    QRectF fireRec = fireplat->sceneBoundingRect();
+    QRectF fireRec = woodplat->sceneBoundingRect();
     QRectF rockRec = rockplat->sceneBoundingRect();
     int x = character->pos().x();
     int y = character->pos().y();
@@ -424,7 +424,7 @@ void BattleScene::HeroInPut(Character *character)                        //人�
             {
                 v.setY(-0.8);
             }
-            else if (fireplat->pos().x() != -1000)                                                 //木制平台未被燃烧至消失时
+            else if (woodplat->pos().x() != -1000)                                                 //木制平台未被燃烧至消失时
             {
                 if ((v.y() == 0) && (y - fireRec.top()) < 20 && (x > fireRec.left()) && (x < fireRec.right()))
                 {
@@ -1018,7 +1018,7 @@ void BattleScene::gravity(Item *item, qreal g)                                  
         }
         else
         {
-            if (fireplat->pos().x() == -1000)
+            if (woodplat->pos().x() == -1000)
             {
                 if (item->fall_v.y() >= 0 && y < (map->getFloorHeight() - 20))
                 {
@@ -1243,12 +1243,12 @@ void BattleScene::attackanimation()                                     //判断
                         removeItem(m_item);
                         if (item->pos().x() > 1000 && item->pos().y() > 200 && item->pos().y() < 340)
                         {
-                            fireplat->platform_life--;
-                            if (fireplat->platform_life <= 0)
+                            woodplat->platform_life--;
+                            if (woodplat->platform_life <= 0)
                             {
-                                fireplat->setPos(-1000, -1000);
-                                fireplat->flame_attacked = false;
-                                fireplat->flameItem->setVisible(false);
+                                woodplat->setPos(-1000, -1000);
+                                woodplat->flame_attacked = false;
+                                woodplat->flameItem->setVisible(false);
 
                             }
                         }
@@ -1342,7 +1342,7 @@ void BattleScene::attackanimation()                                     //判断
 
 void BattleScene::burnt()
 {
-    if (fireplat->flame_attacked)
+    if (woodplat->flame_attacked)
     {
         for (Item *item : total_random_fallthing)
         {
@@ -1432,37 +1432,37 @@ void BattleScene::burnt()
             character->flame_attacked = true;
         }
         static int num_1 = 0;
-        if (Collision_detection(character, fireplat) && character->flame_attacked)
+        if (Collision_detection(character, woodplat) && character->flame_attacked)
         {
-            fireplat->flame_attacked = true;
-            fireplat->flameItem->setVisible(true);
+            woodplat->flame_attacked = true;
+            woodplat->flameItem->setVisible(true);
             num_1++;
             if (num_1 >= 750)
             {
-                fireplat->platform_life--;
-                if (fireplat->platform_life <= 0)
+                woodplat->platform_life--;
+                if (woodplat->platform_life <= 0)
                 {
-                    fireplat->setPos(-1000, -1000);
-                    fireplat->flame_attacked = false;
-                    fireplat->flameItem->setVisible(false);
+                    woodplat->setPos(-1000, -1000);
+                    woodplat->flame_attacked = false;
+                    woodplat->flameItem->setVisible(false);
                 }
                 num_1 = 0;
             }
         }
         static int num_2 = 0;
-        if (Collision_detection(character_2, fireplat) && character_2->flame_attacked)
+        if (Collision_detection(character_2, woodplat) && character_2->flame_attacked)
         {
-            fireplat->flame_attacked = true;
-            fireplat->flameItem->setVisible(true);
+            woodplat->flame_attacked = true;
+            woodplat->flameItem->setVisible(true);
             num_2++;
             if (num_2 >= 750)
             {
-                fireplat->platform_life--;
-                if (fireplat->platform_life <= 0)
+                woodplat->platform_life--;
+                if (woodplat->platform_life <= 0)
                 {
-                    fireplat->setPos(-1000, -1000);
-                    fireplat->flame_attacked = false;
-                    fireplat->flameItem->setVisible(false);
+                    woodplat->setPos(-1000, -1000);
+                    woodplat->flame_attacked = false;
+                    woodplat->flameItem->setVisible(false);
                 }
                 num_2 = 0;
             }
@@ -1705,8 +1705,8 @@ void BattleScene::handlecastweapon(Sword *item, Character *character_2, Characte
                     item->fall_v.setY(0);
                     if (item->element == "Flame")
                     {
-                        fireplat->flameItem->setVisible(true);
-                        fireplat->flame_attacked = true;
+                        woodplat->flameItem->setVisible(true);
+                        woodplat->flame_attacked = true;
                     }
 
                 }

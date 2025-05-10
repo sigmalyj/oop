@@ -1,5 +1,7 @@
 build/
 bin/
-CMakeLists.txt.user
+CMakeLists.txt.user*
 .DS_Store
 qthomework.pro.user*
+cmake-build-debug*/
+.idea/

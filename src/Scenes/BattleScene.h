@@ -94,7 +94,7 @@ private:
     Character *character;
     Character *character_2;
     PlatForm *iceplat;
-    PlatForm *fireplat;
+    PlatForm *woodplat;
     PlatForm *rockplat;
     QVector<Item*>total_random_fallthing;           //两个记录已投掷武器的数组、两个记录已发射的箭的数组、一个记录凋落物的数组
     QVector<Sword *>totalcasting;
